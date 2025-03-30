@@ -1,66 +1,56 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Minimalist Finance
+Minimalist Finace is a financial management system that helps users track their income, expenses, and loans efficiently. It provides a dashboard overview of all accounts, allowing users to manage transactions, monitor loan repayments, and receive automated email reminders for due payments. The app will initially focus on core functionalities before integrating Redis for caching and RabbitMQ for background processing, optimizing performance for real-time financial tracking
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Implementation Steps:
 
-## About Laravel
+### Step 1: Project Setup & Authentication
+- Install Laravel & Set Up Database (MySQL/PostgreSQL)
+- Install Laravel Breeze (For Authentication)
+- Configure User Authentication
+    - Login, Registration, Logout
+    - Email Verification
+    - Password Reset
+- Implement Role-Based Middleware (Admin/User)
+- Test Authentication Flow with Laravel Breeze UI
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Step 2: Accounts & Transactions
+- Accounts Management
+    - Create accounts table (id, name, type, balance, user_id, created_at, updated_at)
+    - Implement CRUD operations for accounts
+    - Set up API endpoints for managing accounts
+    - Validate user permissions (Users can only manage their own accounts)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Transactions Management
+    - Create transactions table (id, account_id, type [income/expense], amount, category, description, date)
+    - Implement CRUD operations for transactions
+    - Validate transactions (e.g., Expense shouldn’t exceed account balance)
+    - Implement category-based filtering
+    - Implement date-range filtering
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Step 3: Loan Management
+- Create loans table (id, user_id, amount, interest_rate, due_date, status)
+- Implement CRUD operations for loan management
+- Create loan_repayments table (id, loan_id, amount_paid, payment_date)
+- Implement logic for calculating remaining loan balance
+- Implement API to fetch due loans
 
-## Learning Laravel
+### Step 4: Reports & Email Notifications
+- Implement API to generate income vs expense reports
+- Implement API to generate monthly financial summary
+- Implement API for loan due reminders
+- Implement Laravel Mail for sending loan due email reminders
+- Implement Laravel Scheduler to send automated email reminders daily
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Step 5: Optimization with Redis & RabbitMQ (Bonus Point)
+✅ Once the core functionalities work, integrate Redis and RabbitMQ for optimization:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+#### Using Redis
+- Cache Dashboard Data (Total balance, expenses, income)
+- Cache Frequently Queried Data (Account balances, recent transactions)
+- Use Redis for Rate Limiting on API requests
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+#### Using RabbitMQ
+- Queue Loan Due Reminder Emails instead of sending them synchronously
+- Queue Large Report Generation Tasks to avoid slowing down the application
+- Queue Loan Interest Calculations to run in the background
 
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
