@@ -25,63 +25,6 @@
         </div>
 
         <!-- Accounts Section -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-lg font-semibold text-gray-900">Accounts</h2>
-                <button class="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center">
-                    <i class="ri-add-line mr-1"></i> Add Account
-                </button>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <div
-                    class="p-4 rounded-lg border border-gray-200 hover:border-blue-200 hover:bg-blue-50 transition-colors cursor-pointer">
-                    <div class="flex items-center justify-between">
-                        <span class="font-medium text-gray-700">Cash</span>
-                        <i class="ri-arrow-right-s-line text-gray-400"></i>
-                    </div>
-                    <p class="text-sm text-gray-500 mt-1">$0.00</p>
-                </div>
-                <div
-                    class="p-4 rounded-lg border border-gray-200 hover:border-blue-200 hover:bg-blue-50 transition-colors cursor-pointer">
-                    <div class="flex items-center justify-between">
-                        <span class="font-medium text-gray-700">Bkash</span>
-                        <i class="ri-arrow-right-s-line text-gray-400"></i>
-                    </div>
-                    <p class="text-sm text-gray-500 mt-1">$0.00</p>
-                </div>
-                <div
-                    class="p-4 rounded-lg border border-gray-200 hover:border-blue-200 hover:bg-blue-50 transition-colors cursor-pointer">
-                    <div class="flex items-center justify-between">
-                        <span class="font-medium text-gray-700">Nagad</span>
-                        <i class="ri-arrow-right-s-line text-gray-400"></i>
-                    </div>
-                    <p class="text-sm text-gray-500 mt-1">$0.00</p>
-                </div>
-                <div
-                    class="p-4 rounded-lg border border-gray-200 hover:border-blue-200 hover:bg-blue-50 transition-colors cursor-pointer">
-                    <div class="flex items-center justify-between">
-                        <span class="font-medium text-gray-700">Rocket</span>
-                        <i class="ri-arrow-right-s-line text-gray-400"></i>
-                    </div>
-                    <p class="text-sm text-gray-500 mt-1">$0.00</p>
-                </div>
-                <div
-                    class="p-4 rounded-lg border border-gray-200 hover:border-blue-200 hover:bg-blue-50 transition-colors cursor-pointer">
-                    <div class="flex items-center justify-between">
-                        <span class="font-medium text-gray-700">City Bank</span>
-                        <i class="ri-arrow-right-s-line text-gray-400"></i>
-                    </div>
-                    <p class="text-sm text-gray-500 mt-1">$0.00</p>
-                </div>
-                <div
-                    class="p-4 rounded-lg border border-gray-200 hover:border-blue-200 hover:bg-blue-50 transition-colors cursor-pointer">
-                    <div class="flex items-center justify-between">
-                        <span class="font-medium text-gray-700">EBL</span>
-                        <i class="ri-arrow-right-s-line text-gray-400"></i>
-                    </div>
-                    <p class="text-sm text-gray-500 mt-1">$0.00</p>
-                </div>
-            </div>
-        </div>
+        <livewire:components.accounts.stats-account />
     </main>
 </x-app-layout>
