@@ -1,5 +1,5 @@
 <?php
-
+use App\Livewire\Expenses\Index;
 use Illuminate\Support\Facades\Route;
 
 Route::view('', 'dashboard')
@@ -9,5 +9,9 @@ Route::view('', 'dashboard')
 Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
+
+Route::view('expenses', 'expenses')
+    ->middleware(['auth'])
+    ->name('expenses');
 
 require __DIR__.'/auth.php';

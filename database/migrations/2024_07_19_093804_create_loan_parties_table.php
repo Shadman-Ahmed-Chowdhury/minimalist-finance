@@ -9,16 +9,16 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('loan_parties', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
-            $table->string('title', 50);
-            $table->text('description');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('name');
+            $table->enum('type', ['borrower', 'lender']);
+            $table->string('email');
+            $table->date('due_date');
             $table->timestamps();
-
-            $table->foreign(['user_id'])->references(['id'])->on('users')->onDelete('CASCADE');
         });
     }
 
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('loan_parties');
     }
 };

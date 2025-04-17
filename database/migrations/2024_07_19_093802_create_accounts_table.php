@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
-            $table->string('title', 50);
+            $table->string('name', 50);
             $table->text('description');
-            $table->integer('current_balance');
+            $table->float('current_balance');
             $table->timestamps();
 
             $table->foreign(['user_id'])->references(['id'])->on('users')->onDelete('CASCADE');
