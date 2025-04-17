@@ -25,6 +25,7 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
     @if ($styles)
         {{ $styles }}
     @endif
@@ -118,10 +119,11 @@
 
     </div>
 
+    <x-toaster-hub />
 
 
     <script defer src="https://unpkg.com/@alpinejs/ui@3.13.2-beta.0/dist/cdn.min.js"></script>
-    <script src="//unpkg.com/alpinejs" defer></script>
+
 
     <script>
         // User dropdown toggle
