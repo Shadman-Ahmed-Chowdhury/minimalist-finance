@@ -13,6 +13,11 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
-        Category::factory(15)->create();
+        // Create a category with specific attributes
+        Category::create([
+            'user_id' => 1,
+            'type' => 'expense',
+            'name' => 'testing',
+        ]);
     }
 }

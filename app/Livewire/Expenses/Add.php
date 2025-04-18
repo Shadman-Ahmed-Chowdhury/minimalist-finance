@@ -32,8 +32,19 @@ class Add extends Component
     {
         $this->form->save();
 
-        Toaster::success('Expense added successfully');
+        // Find the selected account
+        $account = Account::find($this->form->accountName);
 
+        if ($account) {
+        // Deduct the expense amount from the account balance
+            $account->balance -= $this->form->amount;
+            $account->save();
+        }
+
+        // Show success message
+        Toaster::success('Expense added successfully and balance updated.');
+
+        // Reset the form
         $this->reset();
 
     }
