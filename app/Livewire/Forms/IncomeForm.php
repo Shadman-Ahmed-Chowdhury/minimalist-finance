@@ -2,20 +2,64 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\Account;
+use App\Models\Transaction;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 
 class IncomeForm extends Form
 {
-    public string $name = '';
-    public string $amount = '';
 
-    #[Validate(['required', 'string'])]
-    public string $type = '';
+    #[Validate(['required', 'numeric'])]
+    public float $amount = 0;
 
-    public function submit()
+
+    #[Validate(['required', 'numeric'])]
+    public ?int $account_id;
+
+    #[Validate(['required', 'numeric'])]
+    public ?int $category_id;
+
+
+    #[Validate(['nullable', 'string'])]
+    public ?string $note = "";
+
+
+
+
+    public function save()
     {
         $this->validate();
-        //save to database
+
+        try {
+            DB::transaction(function () {
+                //save to database
+                Account::where("id", $this->account_id)
+                    ->where("user_id", Auth::user()->id)
+                    ->increment("balance", $this->amount);
+
+                Transaction::create([
+                    'amount' => $this->amount,
+                    "date" => Carbon::now()->format("Y-m-d"),
+                    'type' => "income",
+                    'to_account_id' => $this->account_id,
+                    'category_id' => $this->category_id,
+                    'user_id' => Auth::user()->id,
+                    "note" => $this->note
+                ]);
+            });
+        } catch (\Throwable $e) {
+            throw $e;
+        }
+
+        $this->reset([
+            'amount',
+            'account_id',
+            'category_id',
+            'note'
+        ]);
     }
 }

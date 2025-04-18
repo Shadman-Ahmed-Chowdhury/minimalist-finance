@@ -2,13 +2,21 @@
 
 use function Livewire\Volt\{state, form, computed};
 use App\Livewire\Forms\IncomeForm;
+use Masmerise\Toaster\Toaster;
 
 state(['buttonIcon' => 'ri-add-line', 'buttonText' => 'Add Income', 'showModal' => false]);
 
 form(IncomeForm::class);
 
 $save = function () {
-    dd('save');
+    try {
+        $this->form->save();
+        $this->showModal = false;
+        Toaster::success('Income added successfully');
+        $this->dispatch('incomeAdded');
+    } catch (\Exception $th) {
+        Toaster::error($th->getMessage());
+    }
 };
 
 $accounts = computed(function () {
@@ -61,6 +69,13 @@ $categories = computed(function () {
                         <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Category</label>
                         <select wire:model="form.category_id" id="name"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 ">
+
+                            <option value="">Select Category</option>
+
+                            @foreach ($this->categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+
 
                         </select>
                         @error('form.category_id')

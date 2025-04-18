@@ -44,21 +44,21 @@
             <nav class="flex-1 p-4">
                 <ul class="space-y-1">
                     <li>
-                        <a href="{{route('dashboard')}}"
+                        <a href="{{ route('dashboard') }}"
                             class="flex items-center gap-3 px-3 py-2 bg-primary-500 text-white rounded-md">
                             <i class="ri-dashboard-line text-lg"></i>
                             <span>Dashboard</span>
                         </a>
                     </li>
                     <li>
-                        <a id="expense" href="{{route('expenses.index')}}"
+                        <a id="expense" href="{{ route('expenses.index') }}"
                             class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
                             <i class="ri-bill-line text-lg"></i>
                             <span>Expense</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="{{ route('income') }}"
                             class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
                             <i class="ri-refund-2-line text-lg"></i>
                             <span>Income</span>
