@@ -75,11 +75,9 @@
                     <select wire:model="form.expenseCategory" id="category"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                         <option value="" disabled selected>Select a category</option>
-                        @if($this->categories()->isEmpty())
-                            <option value="" disabled>No categories available</option>
-                        @endif
+                        
 
-                        @foreach($this->categories() as $category)
+                        @foreach($this->categories as $category)
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
 

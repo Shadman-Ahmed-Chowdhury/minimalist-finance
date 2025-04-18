@@ -4,6 +4,7 @@ namespace App\Livewire\Expenses;
 
 use App\Models\Account;
 use App\Models\Category;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 use App\Livewire\Forms;
 use App\Livewire\Forms\AddExpenseForm;
@@ -13,7 +14,7 @@ use Masmerise\Toaster\Toaster;
 class Add extends Component
 {
 
-
+public $showModal=false;
     public AddExpenseForm $form;
 
     #[Computed]

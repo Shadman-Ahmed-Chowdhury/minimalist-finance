@@ -1,3 +1,1 @@
-<div>
-    <livewire:expenses.add/>
-</div>
+<livewire:expenses.table/>

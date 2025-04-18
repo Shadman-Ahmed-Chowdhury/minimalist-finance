@@ -42,7 +42,8 @@ class AddExpenseForm extends Form
                 'amount' => $this->amount,
                 'date' => $this->date,
                 'note' => $this->note,
-                'category' => $this->expenseCategory,
+                'from_account_id' => $this->accountName,
+                'category_id' => $this->expenseCategory,
                 'type' => 'expense'
             ]);
 

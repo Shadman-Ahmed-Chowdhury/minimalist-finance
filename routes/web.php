@@ -13,7 +13,7 @@ Route::view('profile', 'profile')
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/expenses', Expenses::class)->name('expenses');
+    Volt::route('/expenses', 'expenses.table')->name('expenses');
 
     Volt::route('/income', 'pages.income')->name('income');
 });
