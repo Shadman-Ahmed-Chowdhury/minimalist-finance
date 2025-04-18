@@ -15,10 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id');
             $table->string('name', 50);
-            $table->text('description');
-            $table->float('current_balance');
+            $table->text('description')->nullable(true);
+            $table->float('balance',2)->default(0);
             $table->timestamps();
-
             $table->foreign(['user_id'])->references(['id'])->on('users')->onDelete('CASCADE');
         });
     }
