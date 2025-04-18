@@ -29,6 +29,11 @@ class Transaction extends Model
         'amount' => 'decimal:2',
     ];
 
+    public function scopeIncome()
+    {
+        return $this->whereIn('type', ['income', 'initial']);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -54,4 +59,3 @@ class Transaction extends Model
         return $this->belongsTo(Account::class, 'to_account_id');
     }
 }
-
