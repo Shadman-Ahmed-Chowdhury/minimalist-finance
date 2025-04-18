@@ -4,6 +4,7 @@ namespace App\Livewire\Forms;
 
 use App\Models\Account;
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Validate;
@@ -55,7 +56,9 @@ class AccountForm extends Form
             Transaction::create([
                 'user_id' => auth()->user()->id,
                 'amount' => $this->initial_balance,
-                'type' => 'initial'
+                'type' => 'initial',
+                'to_account_id'=> $account->id,
+                'date'=> Carbon::now()->format('Y-m-d'),
             ]);
         });
 
