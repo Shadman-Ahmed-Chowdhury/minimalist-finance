@@ -1,5 +1,4 @@
-<x-app-layout>
-    <main class="flex-1 p-8">
+<main class="flex-1 p-8">
         <!-- Summary Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
             <div class="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
@@ -27,4 +26,3 @@
         <!-- Accounts Section -->
         <livewire:components.accounts.stats-account />
     </main>
-</x-app-layout>
