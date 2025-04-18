@@ -20,4 +20,9 @@ class Category extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
+    public function scopeIncome($query)
+    {
+        return $query->where('type', 'income');
+    }
 }

@@ -14,6 +14,8 @@ Route::view('profile', 'profile')
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/expenses', Index::class)->name('expenses.index');
+
+    Volt::route('/income', 'pages.income')->name('income');
 });
 
 require __DIR__.'/auth.php';
