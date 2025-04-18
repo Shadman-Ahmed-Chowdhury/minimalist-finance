@@ -51,7 +51,7 @@
                         </a>
                     </li>
                     <li>
-                        <a id="expense" href="{{route('expenses.index')}}"
+                        <a id="expense" href="{{route('expenses')}}"
                             class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
                             <i class="ri-bill-line text-lg"></i>
                             <span>Expense</span>

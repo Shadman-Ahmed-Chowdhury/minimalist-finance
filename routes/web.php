@@ -1,5 +1,5 @@
 <?php
-use App\Livewire\Expenses\Index;
+use App\Livewire\Expenses;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -13,7 +13,7 @@ Route::view('profile', 'profile')
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/expenses', Index::class)->name('expenses.index');
+    Route::get('/expenses', Expenses::class)->name('expenses');
 });
 
 require __DIR__.'/auth.php';

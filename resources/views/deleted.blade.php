@@ -1,3 +1,3 @@
 <h1>
-    Hello from the expenses view
+    <livewire:expenses.add-expenses buttonText="dsdh" />
 </h1>
