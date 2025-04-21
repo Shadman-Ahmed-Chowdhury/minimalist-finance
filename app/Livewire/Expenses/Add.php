@@ -48,6 +48,8 @@ public $showModal=false;
         // Reset the form
         $this->reset();
 
+        $this->dispatch('expenseAdded'); // Dispatch an event to notify other components
+
     }
 
     public function mount()
