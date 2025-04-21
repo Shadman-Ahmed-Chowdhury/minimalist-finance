@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('accounts', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
-            $table->string('title', 50);
-            $table->text('description');
-            $table->integer('current_balance');
+            $table->string('name', 50);
+            $table->enum('type', ['income', 'expense']);
             $table->timestamps();
 
             $table->foreign(['user_id'])->references(['id'])->on('users')->onDelete('CASCADE');
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('accounts');
+        Schema::dropIfExists('categories');
     }
 };
