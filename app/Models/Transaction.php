@@ -34,6 +34,11 @@ class Transaction extends Model
         return $this->whereIn('type', ['income', 'initial']);
     }
 
+    public function scopeTransfer()
+    {
+        return $this->whereIn('type', ['transfer']);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

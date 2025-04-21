@@ -45,7 +45,10 @@
                 <ul class="space-y-1">
                     <li>
                         <a href="{{ route('dashboard') }}"
-                            class="flex items-center gap-3 px-3 py-2 bg-primary-500 text-white rounded-md">
+                            class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md
+
+                            @if (Route::currentRouteName() == 'dashboard') bg-primary-500 text-white hover:bg-primary-100 hover:text-gray-700 @endif
+                            ">
                             <i class="ri-dashboard-line text-lg"></i>
                             <span>Dashboard</span>
                         </a>
@@ -59,14 +62,16 @@
                     </li>
                     <li>
                         <a href="{{ route('income') }}"
+                            wire:current="bg-primary-500 text-white hover:bg-primary-100 hover:text-gray-700"
                             class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
                             <i class="ri-refund-2-line text-lg"></i>
                             <span>Income</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#"
-                            class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
+                        <a href="{{ route('transfer') }}"
+                            wire:current="bg-primary-500 text-white hover:bg-primary-100 hover:text-gray-700"
+                            class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100  rounded-md">
                             <i class="ri-exchange-dollar-line text-lg"></i>
                             <span>Transfer</span>
                         </a>
