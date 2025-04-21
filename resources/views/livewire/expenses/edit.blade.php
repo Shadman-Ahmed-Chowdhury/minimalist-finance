@@ -78,7 +78,7 @@ $save = function () {
     session()->flash('message', 'Expense updated successfully.');
     $this->isOpen = false;
     $this->reset(['expenseId', 'date', 'category_id', 'amount', 'from_account_id', 'note']);
-    $this->dispatch('expenseAdded');
+    $this->dispatch('expense-added');
 };
 
 // Close the modal

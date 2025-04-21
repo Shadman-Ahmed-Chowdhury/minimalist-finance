@@ -19,6 +19,8 @@ new class extends Component
 
     public $listeners = [
         'expenseAdded' => '$refresh',
+        'expense-updated' => '$refresh',
+        'expense-deleted' => '$refresh',
     ];
 
     public function updatingFilterCategory()
@@ -85,6 +87,11 @@ new class extends Component
         $this->dispatch('open-edit-modal', expenseId: $id);
     }
 
+
+    public function delete($id)
+    {
+        $this->dispatch('open-delete-modal', expenseId: $id);
+    }
 
 }
 ?>
@@ -187,6 +194,7 @@ new class extends Component
         </div>
 
         <livewire:expenses.edit />
+        <livewire:expenses.delete />
     </div>
 
 </main>
