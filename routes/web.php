@@ -19,6 +19,7 @@ Route::middleware(['auth'])->group(function () {
     Volt::route('/income', 'pages.income')->name('income');
     Volt::route('/transfer', 'pages.transfer')->name('transfer');
     Volt::route('/accounts', 'pages.account')->name('account');
+    Volt::route('/categories', 'pages.category')->name('category');
 });
 
 require __DIR__ . '/auth.php';

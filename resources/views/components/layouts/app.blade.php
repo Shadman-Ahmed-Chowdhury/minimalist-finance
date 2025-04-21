@@ -84,6 +84,14 @@
                             <span>Accounts</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('category') }}"
+                            wire:current="bg-primary-500 text-white hover:bg-primary-100 hover:text-gray-700"
+                            class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100  rounded-md">
+                            <i class="ri-donut-chart-line"></i>
+                            <span>Categories</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
 
