@@ -26,4 +26,9 @@ class Category extends Model
     {
         return $query->where('type', 'income');
     }
+
+    public function scopeExpense(Builder $query)
+    {
+        return $query->where('type', 'expense');
+    }
 }
