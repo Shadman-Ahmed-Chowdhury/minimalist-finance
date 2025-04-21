@@ -3,9 +3,11 @@ use function Livewire\Volt\{state, on};
 
 state(['category']);
 
-on(function () {
-    return ['categoryUpdated' . $this->category->id => $this->category->refresh()];
-});
+on([
+    'categoryUpdated{category.id}' => function () {
+        $this->category->refresh();
+    },
+]);
 
 ?>
 
