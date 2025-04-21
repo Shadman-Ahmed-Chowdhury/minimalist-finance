@@ -54,7 +54,7 @@
                         </a>
                     </li>
                     <li>
-                        <a id="expense" href="{{route('expenses')}}"
+                        <a id="expense" href="{{ route('expenses') }}"
                             class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
                             <i class="ri-bill-line text-lg"></i>
                             <span>Expense</span>
@@ -76,6 +76,14 @@
                             <span>Transfer</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('account') }}"
+                            wire:current="bg-primary-500 text-white hover:bg-primary-100 hover:text-gray-700"
+                            class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100  rounded-md">
+                            <i class="ri-wallet-2-line text-lg"></i>
+                            <span>Accounts</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
 
@@ -87,8 +95,8 @@
                         <i class="ri-user-line text-gray-500"></i>
                     </div>
                     <div>
-                        <p class="text-sm font-medium">John Doe</p>
-                        <p class="text-xs text-gray-500">johndoe@example.com</p>
+                        <p class="text-sm font-medium">{{ auth()->user()->name }}</p>
+                        <p class="text-xs text-gray-500">{{ auth()->user()->email }}</p>
                     </div>
                 </div>
             </div>

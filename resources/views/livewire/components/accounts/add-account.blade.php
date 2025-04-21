@@ -4,7 +4,7 @@ use function Livewire\Volt\{state, form};
 use App\Livewire\Forms\AccountForm;
 use Masmerise\Toaster\Toaster;
 
-state(['buttonIcon' => 'ri-add-line', 'buttonText' => 'Add Account', 'showModal' => false]);
+state(['buttonIcon' => 'ri-add-line', 'buttonText' => 'Add Account', 'showModal' => false, 'class' => '']);
 form(AccountForm::class);
 
 $save = function () {
@@ -26,7 +26,8 @@ $save = function () {
 <x-dialog wire:model="showModal">
 
     <x-dialog.open>
-        <button type="button" class="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center">
+        <button type="button"
+            class="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center {{ $class }}">
             <i class="{{ $buttonIcon }}"></i>{{ $buttonText }}
         </button>
     </x-dialog.open>
