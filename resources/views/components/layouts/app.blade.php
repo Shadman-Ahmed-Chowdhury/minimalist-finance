@@ -134,10 +134,7 @@
                         </a>
                     </li>
                     <li class="border-t border-gray-100 mt-2 pt-2">
-                        <a href="#" class="flex items-center px-4 py-2 text-red-500 hover:bg-gray-100">
-                            <i class="ri-logout-box-r-line mr-2"></i>
-                            <span>Logout</span>
-                        </a>
+                        <livewire:components.logout />
                     </li>
                 </ul>
             </div>
