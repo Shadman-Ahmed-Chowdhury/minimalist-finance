@@ -1,6 +1,6 @@
 <?php
 
-use App\Livewire\Expenses\Index;
+use App\Livewire\Expenses;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -14,7 +14,7 @@ Route::view('profile', 'profile')
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/expenses', Index::class)->name('expenses.index');
+    Volt::route('/expenses', 'expenses.table')->name('expenses');
 
     Volt::route('/income', 'pages.income')->name('income');
     Volt::route('/transfer', 'pages.transfer')->name('transfer');

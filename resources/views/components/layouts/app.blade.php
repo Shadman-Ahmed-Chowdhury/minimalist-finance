@@ -54,8 +54,7 @@
                         </a>
                     </li>
                     <li>
-                        <a id="expense" href="{{ route('expenses.index') }}"
-                            wire:current="bg-primary-500 text-white hover:bg-primary-100 hover:text-gray-700"
+                        <a id="expense" href="{{route('expenses')}}"
                             class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
                             <i class="ri-bill-line text-lg"></i>
                             <span>Expense</span>
