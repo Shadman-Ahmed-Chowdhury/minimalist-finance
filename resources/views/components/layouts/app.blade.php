@@ -69,6 +69,14 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ route('loans') }}"
+                            wire:current="bg-primary-500 text-white hover:bg-primary-100 hover:text-gray-700"
+                            class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
+                            <i class="ri-refund-2-line text-lg"></i>
+                            <span>Loan</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ route('transfer') }}"
                             wire:current="bg-primary-500 text-white hover:bg-primary-100 hover:text-gray-700"
                             class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100  rounded-md">

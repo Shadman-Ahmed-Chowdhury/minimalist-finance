@@ -82,7 +82,7 @@ $deleteIncome = function ($id) {
 
 ?>
 <main class="flex-1 p-8">
-    <div class="mmx-auto space-y-6">
+    <div class="mx-auto space-y-6">
         <!-- Header Section -->
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-semibold tracking-tight">Income</h1>
