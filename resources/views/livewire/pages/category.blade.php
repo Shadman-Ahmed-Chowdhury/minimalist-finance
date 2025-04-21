@@ -98,20 +98,7 @@ $deleteCategory = function ($id) {
                     </thead>
                     <tbody id="categoryTableBody">
                         @foreach ($this->categories as $category)
-                            <tr key="{{ $category->id }}">
-                                <td class="px-4 py-3">
-                                    {{ $category->name }}
-                                </td>
-
-                                <td class="px-4 py-3">{{ strtoupper($category->type) }}</td>
-                                <td class="px-4 py-3">
-
-                                    <button title="Delete" wire:confirm="Are you sure to delete it?"
-                                        wire:click="deleteCategory({{ $category->id }})" class="px-1 py-1 text-red-500">
-                                        <i class="ri-delete-bin-6-line"></i>Delete
-                                    </button>
-                                </td>
-                            </tr>
+                            <livewire:components.category.category-row key="{{ $category->id }}" :category="$category" />
                         @endforeach
                     </tbody>
                 </table>

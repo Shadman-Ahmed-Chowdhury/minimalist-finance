@@ -18,7 +18,6 @@ class CategoryForm extends Form
     public ?string $name;
     public ?string $type = 'expense';
 
-    #[Locked]
     public ?Category $category;
 
 
@@ -41,6 +40,12 @@ class CategoryForm extends Form
             'user_id' => Auth::user()->id
         ]);
 
-        $this->reset();
+        $this->reset(['name', 'type']);
+    }
+
+    public function update()
+    {
+        $this->validate();
+        $this->category->update($this->only(['name', 'type']));
     }
 }
