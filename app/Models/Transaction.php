@@ -47,7 +47,7 @@ class Transaction extends Model
 
     public function scopeLoan(Builder $query)
     {
-        return $query->whereIn('type', ['load']);
+        return $query->whereIn('type', ['loan']);
     }
 
     public function scopeMonthly(Builder $query)
