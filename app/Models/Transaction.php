@@ -40,16 +40,23 @@ class Transaction extends Model
         return $query->whereIn('type', ['expense']);
     }
 
+    public function scopeTransfer(Builder $query)
+    {
+        return $query->whereIn('type', ['transfer']);
+    }
+
+    public function scopeLoan(Builder $query)
+    {
+        return $query->whereIn('type', ['load']);
+    }
+
     public function scopeMonthly(Builder $query)
     {
         return $query->whereBetween('date', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()]);
     }
 
 
-    public function scopeTransfer(Builder $query)
-    {
-        return $query->whereIn('type', ['transfer']);
-    }
+
 
     public function user()
     {

@@ -27,6 +27,16 @@ class DashboardStats extends Component
                 ->income()
                 ->monthly()
                 ->sum("amount"),
+            "totalLoanTaken" => Transaction::where("user_id", auth()->user()->id)
+                ->loan()
+                ->where('loan_type', 'taken')
+                ->monthly()
+                ->sum("amount"),
+            "totalLoanGiven" => Transaction::where("user_id", auth()->user()->id)
+                ->loan()
+                ->where('loan_type', 'given')
+                ->monthly()
+                ->sum("amount"),
         ];
     }
 

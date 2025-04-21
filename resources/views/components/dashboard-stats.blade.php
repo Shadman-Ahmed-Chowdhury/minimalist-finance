@@ -6,7 +6,7 @@
     <x-stats-single-card :bgColor="'bg-green-50 border-green-100'" :color="'text-green-600'" title="Monthly Income"
         value="{{ $stats['monthlyIncome'] }}" />
     <x-stats-single-card :bgColor="'bg-rose-50 border-emerald-100'" :color="'text-rose-600'" title="Total Loan Taken"
-        value="{{ $stats['totalIncome'] }}" />
+        value="{{ $stats['totalLoanTaken'] }}" />
     <x-stats-single-card :bgColor="'bg-cyan-50 border-cyan-100'" :color="'text-cyan-600'" title="Total Loan Given"
-        value="{{ $stats['totalIncome'] }}" />
+        value="{{ $stats['totalLoanGiven'] }}" />
 </div>
