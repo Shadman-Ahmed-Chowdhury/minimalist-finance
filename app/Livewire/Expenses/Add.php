@@ -26,7 +26,10 @@ public $showModal=false;
     #[Computed]
     public function categories()
     {
-        return Category::where('user_id', auth()->user()->id)->get();
+
+        return Category::where('user_id', auth()->user()->id)
+        ->where('type', 'expense')
+        ->get();
     }
 
     public function save()
