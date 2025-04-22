@@ -13,7 +13,7 @@ on(function () {
 
 <tr key="{{ $transfer->id }}">
     <td class="px-4 py-3">
-        {{ $transfer->date->format('Y-m-d') }}
+        {{ $transfer->date->format('d M Y') }}
     </td>
     <td class="px-4 py-3">
         {{ $transfer->fromAccount?->name }}
@@ -23,7 +23,8 @@ on(function () {
     </td>
     <td class="px-4 py-3">${{ number_format($transfer->amount, 2) }}</td>
     <td class="px-4 py-3">
-        {{ $transfer->note }}
+
+        {{ strlen($transfer->note) > 40 ? substr($transfer->note, 0, 40) . '...' : $transfer->note }}
     </td>
     <td class="px-4 py-3">
 
