@@ -4,6 +4,7 @@ use function Livewire\Volt\{computed, uses, on, state, updated};
 
 use Livewire\WithPagination;
 use Masmerise\Toaster\Toaster;
+use Carbon\Carbon;
 
 on(['incomeAdded' => '$refresh', 'incomeRemoved' => '$refresh']);
 
@@ -13,6 +14,8 @@ state([
     'filterAccount' => '',
     'filterCategory' => '',
     'filterSearch' => '',
+    'filterFromDate' => Carbon::now()->subDays(30)->format('Y-m-d'),
+    'filterToDate' => Carbon::now()->format('Y-m-d'),
 ]);
 
 updated([
@@ -23,6 +26,12 @@ updated([
         $this->resetPage();
     },
     'filterSearch' => function () {
+        $this->resetPage();
+    },
+    'filterFromDate' => function () {
+        $this->resetPage();
+    },
+    'filterToDate' => function () {
         $this->resetPage();
     },
 ]);
@@ -39,6 +48,12 @@ $incomes = computed(function () {
         })
         ->when($this->filterSearch, function ($query) {
             return $query->where('note', 'like', '%' . $this->filterSearch . '%')->orWhere('amount', 'like', '%' . $this->filterSearch . '%');
+        })
+        ->when($this->filterFromDate, function ($query) {
+            return $query->whereDate('date', '>=', $this->filterFromDate);
+        })
+        ->when($this->filterToDate, function ($query) {
+            return $query->whereDate('date', '<=', $this->filterToDate);
         })
         ->with(['category', 'toAccount'])
         ->paginate(10);
@@ -118,6 +133,20 @@ $deleteIncome = function ($id) {
                     <label for="search" class="block mb-2 text-sm font-medium text-gray-900">Search</label>
                     <input type="text" wire:model.live.debounce.500ms="filterSearch"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
+                </div>
+            </div>
+            <div class="flex space-x-4">
+
+                <div class="flex-1">
+                    <label for="fromDate" class="block mb-2 text-sm font-medium text-gray-900">From Date</label>
+                    <input type="date" wire:model.live="filterFromDate"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" />
+                </div>
+
+                <div class="flex-1">
+                    <label for="toDate" class="block mb-2 text-sm font-medium text-gray-900">To Date</label>
+                    <input type="date" wire:model.live="filterToDate"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" />
                 </div>
             </div>
         </div>
