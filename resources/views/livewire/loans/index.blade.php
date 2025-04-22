@@ -16,6 +16,8 @@ new class extends Component {
     public $filterAccount = '';
     public $filterSearch = '';
     public $filterDueDate = '';
+    public $filterFromDate = '';
+    public $filterToDate = '';
 
     public $listeners = [
         'loanAdded' => '$refresh',
@@ -27,55 +29,61 @@ new class extends Component {
         return Transaction::query()
             ->where('type', 'loan')
             ->when($this->filterType, fn($query) => $query->where('loan_type', $this->filterType))
-            ->when($this->filterAccount, fn($query) => $query->where(function($q) {
-                $q->where('from_account_id', $this->filterAccount)
-                  ->orWhere('to_account_id', $this->filterAccount);
-            }))
-            ->when($this->filterDueDate, fn($query) => $query->whereHas('loanParty', fn($q) => $q->whereDate('due_date', $this->filterDueDate)))
-            ->when($this->filterSearch, fn($query) => $query->where(function($q) {
-                $q->whereHas('loanParty', fn($q2) => $q2->where('name', 'like', '%'.$this->filterSearch.'%'))
-                  ->orWhere('amount', 'like', '%'.$this->filterSearch.'%')
-                  ->orWhere('note', 'like', '%'.$this->filterSearch.'%');
-            }))
+            ->when(
+                $this->filterAccount,
+                fn($query) => $query->where(function ($q) {
+                    $q->where('from_account_id', $this->filterAccount)->orWhere('to_account_id', $this->filterAccount);
+                }),
+            )
+            ->when(
+                $this->filterSearch,
+                fn($query) => $query->where(function ($q) {
+                    $q->whereHas('loanParty', fn($q2) => $q2->where('name', 'like', '%' . $this->filterSearch . '%'))
+                        ->orWhere('amount', 'like', '%' . $this->filterSearch . '%')
+                        ->orWhere('note', 'like', '%' . $this->filterSearch . '%');
+                }),
+            )
+            ->when($this->filterFromDate, fn($query) => $query->whereHas('loanParty', fn($q) => $q->whereDate('due_date', '>=', $this->filterFromDate)))
+            ->when($this->filterToDate, fn($query) => $query->whereHas('loanParty', fn($q) => $q->whereDate('due_date', '>=', $this->filterToDate)))
             ->with(['loanParty', 'fromAccount', 'toAccount'])
             ->latest()
             ->paginate(10);
     }
 
     public function deleteTransaction($transactionId)
-{
-    $transaction = Transaction::findOrFail($transactionId);
+    {
+        $transaction = Transaction::findOrFail($transactionId);
 
-    try {
-        DB::beginTransaction();
+        try {
+            DB::beginTransaction();
 
-        // Adjust the account balance based on the loan type
-        if ($transaction->loan_type === 'given') {
-            // If the loan type is "given", add the amount back to the `from_account`
-            $account = Account::findOrFail($transaction->from_account_id);
-            $account->balance += $transaction->amount;
-            $account->save();
-        } elseif ($transaction->loan_type === 'taken') {
-            // If the loan type is "taken", deduct the amount from the `to_account`
-            $account = Account::findOrFail($transaction->to_account_id);
-            $account->balance -= $transaction->amount;
-            $account->save();
+            // Adjust the account balance based on the loan type
+            if ($transaction->loan_type === 'given') {
+                // If the loan type is "given", add the amount back to the `from_account`
+                $account = Account::findOrFail($transaction->from_account_id);
+                $account->balance += $transaction->amount;
+                $account->save();
+            } elseif ($transaction->loan_type === 'taken') {
+                // If the loan type is "taken", deduct the amount from the `to_account`
+                $account = Account::findOrFail($transaction->to_account_id);
+                $account->balance -= $transaction->amount;
+                $account->save();
+            }
+
+            // Delete the transaction
+            $transaction->delete();
+
+            DB::commit();
+
+            // Dispatch an event to notify the UI
+            $this->dispatch('loanDeleted');
+            Toaster::success('Loan transaction deleted successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            session()->flash('error', 'Failed to delete the loan transaction.');
+            throw $e;
         }
-
-        // Delete the transaction
-        $transaction->delete();
-
-        DB::commit();
-
-        // Dispatch an event to notify the UI
-        $this->dispatch('loanDeleted');
-        Toaster::success('Loan transaction deleted successfully.');
-    } catch (\Exception $e) {
-        DB::rollBack();
-        session()->flash('error', 'Failed to delete the loan transaction.');
-        throw $e;
     }
-}
 };
 ?>
 
@@ -99,18 +107,12 @@ new class extends Component {
                         <option value="given">Given</option>
                     </select>
                 </div>
-
-                <div class="flex-1">
-                    <label for="due_date" class="block mb-2 text-sm font-medium text-gray-900">Due Date</label>
-                    <input type="date" wire:model.live.debounce.500ms="filterDueDate"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
-                </div>
                 <div class="flex-1">
                     <label for="account" class="block mb-2 text-sm font-medium text-gray-900">Accounts</label>
                     <select wire:model.live="filterAccount" id="account"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
                         <option value="">All</option>
-                        @foreach(Account::all() as $account)
+                        @foreach (Account::all() as $account)
                             <option value="{{ $account->id }}">{{ $account->name }}</option>
                         @endforeach
                     </select>
@@ -120,6 +122,20 @@ new class extends Component {
                     <input type="text" wire:model.live.debounce.500ms="filterSearch"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
                         placeholder="Search by party name, amount, or note">
+                </div>
+            </div>
+            <div class="flex space-x-4">
+
+                <div class="flex-1">
+                    <label for="fromDate" class="block mb-2 text-sm font-medium text-gray-900">From DUE Date</label>
+                    <input type="date" wire:model.live="filterFromDate"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" />
+                </div>
+
+                <div class="flex-1">
+                    <label for="toDate" class="block mb-2 text-sm font-medium text-gray-900">To DUE Date</label>
+                    <input type="date" wire:model.live="filterToDate"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" />
                 </div>
             </div>
         </div>
@@ -140,34 +156,32 @@ new class extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($this->transactions as $transaction)
+                        @foreach ($this->transactions as $transaction)
                             <tr class="border-b border-gray-200 hover:bg-gray-50">
                                 <td class="px-4 py-3">
-                                    {{ $transaction->date ? Carbon::parse($transaction->date)->format('Y-m-d') : 'N/A' }}
+                                    {{ $transaction->date->format('d M Y') }}
                                 </td>
                                 <td class="px-4 py-3">${{ number_format($transaction->amount, 2) }}</td>
                                 <td class="px-4 py-3">{{ $transaction->loanParty->name ?? 'N/A' }}</td>
                                 <td class="px-4 py-3">{{ ucfirst($transaction->loan_type) }}</td>
                                 <td class="px-4 py-3">
-                                    {{ $transaction->loan_type === 'taken' ?
-                                        ($transaction->toAccount->name ?? 'N/A') :
-                                        ($transaction->fromAccount->name ?? 'N/A') }}
+                                    {{ $transaction->loan_type === 'taken'
+                                        ? $transaction->toAccount?->name ?? 'N/A'
+                                        : $transaction->fromAccount?->name ?? 'N/A' }}
                                 </td>
                                 <td class="px-4 py-3">
-                                    {{ $transaction->loanParty->due_date ? Carbon::parse($transaction->loanParty->due_date)->format('Y-m-d') : 'N/A' }}
+                                    {{ $transaction->loanParty?->due_date->format('d M Y') }}
                                 </td>
                                 <td class="px-4 py-3">
-                                    <button
-                                        wire:click="deleteTransaction({{ $transaction->id }})"
+                                    <button wire:click="deleteTransaction({{ $transaction->id }})"
                                         wire:confirm="Are you sure you want to delete this loan transaction?"
-                                        class="text-red-600 hover:text-red-800"
-                                    >
+                                        class="text-red-600 hover:text-red-800">
                                         Delete
                                     </button>
                                 </td>
                             </tr>
                         @endforeach
-                        @if($this->transactions->isEmpty())
+                        @if ($this->transactions->isEmpty())
                             <tr>
                                 <td colspan="7" class="px-4 py-3 text-center text-gray-500">
                                     No loan transactions found
@@ -175,6 +189,14 @@ new class extends Component {
                             </tr>
                         @endif
                     </tbody>
+                    <tfoot class="bg-gray-50 border-t border-gray-200">
+                        <tr>
+                            <th class="text-left px-4 py-3 text-gray-500 font-medium">Total</th>
+                            <th class="text-left px-4 py-3 text-gray-500 font-medium">
+                                ${{ number_format($this->transactions->sum('amount'), 2) }}</th>
+                            <th class="text-left px-4 py-3 text-gray-500 font-medium" colspan="5"></th>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
             <div class="p-4">

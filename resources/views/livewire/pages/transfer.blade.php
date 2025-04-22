@@ -147,6 +147,13 @@ $deleteIncome = function ($id) {
                         @foreach ($this->transfers as $transfer)
                             <livewire:components.transfer.transfer-row key="{{ $transfer->id }}" :transfer="$transfer" />
                         @endforeach
+                        @if ($this->transfers->isEmpty())
+                            <tr>
+                                <td colspan="6" class="px-4 py-3 text-center text-gray-500">
+                                    No loan transactions found
+                                </td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
             </div>

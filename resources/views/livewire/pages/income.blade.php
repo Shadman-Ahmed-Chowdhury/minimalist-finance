@@ -169,7 +169,23 @@ $deleteIncome = function ($id) {
                         @foreach ($this->incomes as $income)
                             <livewire:components.income.income-row key="{{ $income->id }}" :income="$income" />
                         @endforeach
+                        @if ($this->incomes->isEmpty())
+                            <tr>
+                                <td colspan="6" class="px-4 py-3 text-center text-gray-500">
+                                    No loan transactions found
+                                </td>
+                            </tr>
+                        @endif
                     </tbody>
+                    <tfoot class="bg-gray-50 border-t border-gray-200">
+                        <tr>
+                            <th class="text-left px-4 py-3 text-gray-500 font-medium"></th>
+                            <th class="text-left px-4 py-3 text-gray-500 font-medium">Total</th>
+                            <th class="text-left px-4 py-3 text-gray-500 font-medium">
+                                ${{ number_format($this->incomes->sum('amount'), 2) }}</th>
+                            <th class="text-left px-4 py-3 text-gray-500 font-medium" colspan="3"></th>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
             <div class="p-4">
