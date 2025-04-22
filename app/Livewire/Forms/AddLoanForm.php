@@ -57,7 +57,24 @@ class AddLoanForm extends Form
     public function rules()
     {
         return [
-            'amount' => ['required', 'numeric'],
+            'amount' => [
+                'required',
+                'numeric',
+                function ($attribute, $value, $fail) {
+                    // Only apply this validation if the type is 'borrower'
+                    if ($this->type === 'borrower') {
+                        $account = Account::find($this->accountName);
+
+                        if (!$account) {
+                            return $fail('The selected account does not exist.');
+                        }
+
+                        if ($account->balance < $value) {
+                            return $fail('Insufficient balance in the selected account.');
+                        }
+                    }
+                },
+            ],
             'accountName' => ['required', 'string'],
             'name' => ['required', 'string'],
             'type' => ['required', 'string'],
@@ -65,6 +82,7 @@ class AddLoanForm extends Form
             'dueDate' => ['required', 'date'],
         ];
     }
+
 
     private function updateAccountBalance(string $loanType): void
     {
