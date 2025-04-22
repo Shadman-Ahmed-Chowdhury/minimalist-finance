@@ -1,19 +1,21 @@
 <?php
 
-use function Livewire\Volt\{state, on, computed, mount};
+use function Livewire\Volt\{state, on};
 
 state(['income']);
 
-on(function () {
-    return ['incomeUpdated' . $this->income->id => $this->income->refresh()];
-});
+on([
+    'incomeUpdated{income.id}' => function () {
+        $this->income->refresh();
+    },
+]);
 
 ?>
 
 
 <tr key="{{ $income->id }}">
     <td class="px-4 py-3">
-        {{ $income->date->format('Y-m-d') }}
+        {{ $income->date->format('d M Y') }}
     </td>
     <td class="px-4 py-3">
         {{ $income->category?->name }}
@@ -23,7 +25,7 @@ on(function () {
         {{ $income->toAccount?->name }}
     </td>
     <td class="px-4 py-3">
-        {{ $income->note }}
+        {{ strlen($income->note) > 40 ? substr($income->note, 0, 40) . '...' : $income->note }}
     </td>
     <td class="px-4 py-3">
 

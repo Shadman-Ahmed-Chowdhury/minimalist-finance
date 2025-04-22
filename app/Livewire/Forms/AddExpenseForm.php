@@ -3,9 +3,11 @@
 namespace App\Livewire\Forms;
 
 use App\Models\Transaction;
+use Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
+use App\Models\Account;
 
 class AddExpenseForm extends Form
 {
@@ -20,12 +22,21 @@ class AddExpenseForm extends Form
     {
         return [
             'accountName' => ['required', 'string', 'max:50'],
-            'amount' => ['required', 'numeric'],
+            'amount' => ['required', 'numeric',function($attr,$value, $fail) {
+                $account = Account::find($this->accountName)->where('user_id',Auth::user()->id)->first();
+                $currentBalance = $account?->balance??0;
+
+                if($currentBalance < $value){
+                    $fail('Insufficient balance in the selected account.');
+
+                }
+            }],
             'date' => ['required', 'date'],
             'note' => ['nullable', 'string'],
             'expenseCategory' => ['required', 'string'],
         ];
     }
+
 
     public function save()
     {

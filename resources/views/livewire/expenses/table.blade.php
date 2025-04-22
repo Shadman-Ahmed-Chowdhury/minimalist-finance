@@ -17,6 +17,12 @@ new class extends Component
     public $filterAccount = '';
     public $filterSearch = '';
 
+    public $listeners = [
+        'expenseAdded' => '$refresh',
+        'expense-updated' => '$refresh',
+        'expense-deleted' => '$refresh',
+    ];
+
     public function updatingFilterCategory()
     {
         $this->resetPage();
@@ -76,6 +82,16 @@ new class extends Component
         $this->filterSearch = '';
     }
 
+    public function edit($id)
+    {
+        $this->dispatch('open-edit-modal', expenseId: $id);
+    }
+
+
+    public function delete($id)
+    {
+        $this->dispatch('open-delete-modal', expenseId: $id);
+    }
 
 }
 ?>
@@ -97,7 +113,7 @@ new class extends Component
                     <select wire:model.live="filterCategory" id="category"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
                         <option value="">All</option>
-                        
+
                         @foreach ($this->categories as $category)
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
                        @endforeach
@@ -123,7 +139,7 @@ new class extends Component
                 </div>
             </div>
         </div>
-        
+
 
         <!-- Expense Table -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
@@ -148,7 +164,7 @@ new class extends Component
                                 </td>
                             </tr>
                         @endif
-                        
+
                         @foreach ($this->expenses as $expense)
                             <tr class="border-b border-gray-200">
                                 <td class="px-4 py-3 text-gray-700">{{ $expense->date->format('Y-m-d') }}</td>
@@ -160,6 +176,7 @@ new class extends Component
                                     <button wire:click="edit({{ $expense->id }})" class="text-blue-500 hover:text-blue-700">
                                         Edit
                                     </button>
+
                                     <button wire:click="delete({{ $expense->id }})" class="text-red-500 hover:text-red-700 ml-2">
                                         Delete
                                     </button>
@@ -175,5 +192,9 @@ new class extends Component
                 {{ $this->expenses->links() }}
             </div>
         </div>
+
+        <livewire:expenses.edit />
+        <livewire:expenses.delete />
     </div>
+
 </main>

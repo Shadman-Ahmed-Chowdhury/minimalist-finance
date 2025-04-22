@@ -26,7 +26,10 @@ public $showModal=false;
     #[Computed]
     public function categories()
     {
-        return Category::where('user_id', auth()->user()->id)->get();
+
+        return Category::where('user_id', auth()->user()->id)
+        ->where('type', 'expense')
+        ->get();
     }
 
     public function save()
@@ -47,6 +50,8 @@ public $showModal=false;
 
         // Reset the form
         $this->reset();
+
+        $this->dispatch('expenseAdded'); // Dispatch an event to notify other components
 
     }
 

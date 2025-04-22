@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,10 +30,33 @@ class Transaction extends Model
         'amount' => 'decimal:2',
     ];
 
-    public function scopeIncome()
+    public function scopeIncome(Builder $query)
     {
-        return $this->whereIn('type', ['income', 'initial']);
+        return $query->whereIn('type', ['income', 'initial']);
     }
+
+    public function scopeExpense(Builder $query)
+    {
+        return $query->whereIn('type', ['expense']);
+    }
+
+    public function scopeTransfer(Builder $query)
+    {
+        return $query->whereIn('type', ['transfer']);
+    }
+
+    public function scopeLoan(Builder $query)
+    {
+        return $query->whereIn('type', ['loan']);
+    }
+
+    public function scopeMonthly(Builder $query)
+    {
+        return $query->whereBetween('date', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()]);
+    }
+
+
+
 
     public function user()
     {

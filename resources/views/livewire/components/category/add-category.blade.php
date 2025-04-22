@@ -1,21 +1,17 @@
 <?php
 
 use function Livewire\Volt\{state, form};
-use App\Livewire\Forms\AccountForm;
+use App\Livewire\Forms\CategoryForm;
 use Masmerise\Toaster\Toaster;
 
-state(['buttonIcon' => 'ri-add-line', 'buttonText' => 'Add Account', 'showModal' => false, 'class' => '']);
-form(AccountForm::class);
+state(['buttonIcon' => 'ri-add-line', 'buttonText' => 'Add Category', 'showModal' => false, 'class' => '']);
+form(CategoryForm::class);
 
 $save = function () {
-    try {
-        $this->form->save();
-        $this->showModal = false;
-        Toaster::success('Account added successfully');
-        $this->dispatch('accountAdded');
-    } catch (\Exception $th) {
-        Toaster::error($th->getMessage());
-    }
+    $this->form->save();
+    $this->showModal = false;
+    Toaster::success('Category added successfully');
+    $this->dispatch('categoryAdded');
 };
 
 ?>
@@ -35,7 +31,7 @@ $save = function () {
     <x-dialog.panel>
 
         <h3 class="text-xl font-semibold text-gray-900 ">
-            Add Account
+            Add Category
         </h3>
 
         <hr>
@@ -44,31 +40,24 @@ $save = function () {
         <div class="space-y-4 mt-5">
             <form wire:submit.prevent="save" class="mx-auto">
                 <div class="mb-5">
-                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Account Name</label>
+                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Category Name</label>
                     <input wire:model="form.name" type="text" id="name"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                        placeholder="Bkash" />
+                        placeholder="Food" />
                     @error('form.name')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div class="mb-5">
-                    <label for="init_balance" class="block mb-2 text-sm font-medium text-gray-900">Initial
-                        Balance</label>
-                    <input wire:model="form.initial_balance" type="number" id="init_balance"
+                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Category Type</label>
+                    <select wire:model="form.type" type="text" id="type"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                        placeholder="0" />
-                    @error('form.initial_balance')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div class="mb-5">
-                    <label for="desc" class="block mb-2 text-sm font-medium text-gray-900">Description</label>
-                    <textarea wire:model="form.description" id="desc"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "></textarea>
-                    @error('form.description')
+                        placeholder="Bkash">
+                        <option value="expense">Expense</option>
+                        <option value="income">Income</option>
+                    </select>
+                    @error('form.type')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>

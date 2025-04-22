@@ -59,7 +59,7 @@ $categories = computed(function () {
 
                 <div class="mb-5">
                     <label for="init_balance" class="block mb-2 text-sm font-medium text-gray-900">Amount</label>
-                    <input wire:model="form.amount" type="number" id="amount"
+                    <input wire:model="form.amount" type="text" id="amount"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 "
                         placeholder="0" />
                     @error('form.amount')

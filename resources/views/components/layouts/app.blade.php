@@ -45,13 +45,17 @@
                 <ul class="space-y-1">
                     <li>
                         <a href="{{ route('dashboard') }}"
-                            class="flex items-center gap-3 px-3 py-2 bg-primary-500 text-white rounded-md">
+                            class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md
+
+                            @if (Route::currentRouteName() == 'dashboard') bg-primary-500 text-white hover:bg-primary-100 hover:text-gray-700 @endif
+                            ">
                             <i class="ri-dashboard-line text-lg"></i>
                             <span>Dashboard</span>
                         </a>
                     </li>
                     <li>
-                        <a id="expense" href="{{route('expenses')}}"
+                        <a id="expense" href="{{ route('expenses') }}"
+                            wire:current="bg-primary-500 text-white hover:bg-primary-100 hover:text-gray-700"
                             class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
                             <i class="ri-bill-line text-lg"></i>
                             <span>Expense</span>
@@ -59,16 +63,42 @@
                     </li>
                     <li>
                         <a href="{{ route('income') }}"
+                            wire:current="bg-primary-500 text-white hover:bg-primary-100 hover:text-gray-700"
                             class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
                             <i class="ri-refund-2-line text-lg"></i>
                             <span>Income</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="{{ route('loans') }}"
+                            wire:current="bg-primary-500 text-white hover:bg-primary-100 hover:text-gray-700"
                             class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
+                            <i class="ri-refund-2-line text-lg"></i>
+                            <span>Loan</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('transfer') }}"
+                            wire:current="bg-primary-500 text-white hover:bg-primary-100 hover:text-gray-700"
+                            class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100  rounded-md">
                             <i class="ri-exchange-dollar-line text-lg"></i>
                             <span>Transfer</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('account') }}"
+                            wire:current="bg-primary-500 text-white hover:bg-primary-100 hover:text-gray-700"
+                            class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100  rounded-md">
+                            <i class="ri-wallet-2-line text-lg"></i>
+                            <span>Accounts</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('category') }}"
+                            wire:current="bg-primary-500 text-white hover:bg-primary-100 hover:text-gray-700"
+                            class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100  rounded-md">
+                            <i class="ri-donut-chart-line"></i>
+                            <span>Categories</span>
                         </a>
                     </li>
                 </ul>
@@ -82,8 +112,8 @@
                         <i class="ri-user-line text-gray-500"></i>
                     </div>
                     <div>
-                        <p class="text-sm font-medium">John Doe</p>
-                        <p class="text-xs text-gray-500">johndoe@example.com</p>
+                        <p class="text-sm font-medium">{{ auth()->user()->name }}</p>
+                        <p class="text-xs text-gray-500">{{ auth()->user()->email }}</p>
                     </div>
                 </div>
             </div>
@@ -105,10 +135,7 @@
                         </a>
                     </li>
                     <li class="border-t border-gray-100 mt-2 pt-2">
-                        <a href="#" class="flex items-center px-4 py-2 text-red-500 hover:bg-gray-100">
-                            <i class="ri-logout-box-r-line mr-2"></i>
-                            <span>Logout</span>
-                        </a>
+                        <livewire:components.logout />
                     </li>
                 </ul>
             </div>
