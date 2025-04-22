@@ -172,13 +172,17 @@ new class extends Component {
                                 <td class="px-4 py-3">
                                     {{ $transaction->loanParty?->due_date->format('d M Y') }}
                                 </td>
+
+
                                 <td class="px-4 py-3">
+                                    @livewire('loans.notify', ['transactionId' => $transaction->id])
                                     <button wire:click="deleteTransaction({{ $transaction->id }})"
                                         wire:confirm="Are you sure you want to delete this loan transaction?"
-                                        class="text-red-600 hover:text-red-800">
+                                        class="text-red-600 hover:text-red-800"><i class="ri-delete-bin-6-line"></i>
                                         Delete
                                     </button>
                                 </td>
+
                             </tr>
                         @endforeach
                         @if ($this->transactions->isEmpty())
