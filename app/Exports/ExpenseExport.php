@@ -43,6 +43,10 @@ class ExpenseExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoS
                 return $query->where(function ($query) {
                     return $query->where("note", "like", "%" . $this->search . "%")->orWhere('amount', 'like', '%' . $this->search . '%');
                 });
+            })->when($this->fromDate, function ($query) {
+                return $query->where("date", ">=", $this->fromDate);
+            })->when($this->toDate, function ($query) {
+                return $query->where("date", "<=", $this->toDate);
             });
     }
 

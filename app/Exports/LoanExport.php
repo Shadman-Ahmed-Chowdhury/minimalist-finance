@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+
 use App\Models\Transaction;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromQuery;
@@ -17,12 +18,13 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Style;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class IncomeExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize, WithStyles, WithColumnWidths, WithDefaultStyles
+
+class LoanExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize, WithStyles, WithColumnWidths, WithDefaultStyles
 {
     use Exportable;
 
     public function __construct(
-        protected $categoryId,
+        protected $type,
         protected $accountId,
         protected $search,
         protected $fromDate,
@@ -31,23 +33,25 @@ class IncomeExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSi
 
     public function query()
     {
-        return Transaction::with(['toAccount', 'category'])
-            ->income()
+        return Transaction::with(['toAccount', 'loanParty'])
+            ->loan()
             ->where("user_id", auth()->user()->id)
             ->latest()
-            ->when($this->categoryId, function ($query) {
-                return $query->where("category_id", $this->categoryId);
+            ->when($this->type, function ($query) {
+                return $query->where("type", $this->type);
             })->when($this->accountId, function ($query) {
                 return $query->where("to_account_id", $this->accountId);
-            })->when($this->search, function ($query) {
-                return $query->where(function ($query) {
-                    return $query->where("note", "like", "%" . $this->search . "%")->orWhere('amount', 'like', '%' . $this->search . '%');
-                });
-            })->when($this->fromDate, function ($query) {
-                return $query->where("date", ">=", $this->fromDate);
-            })->when($this->toDate, function ($query) {
-                return $query->where("date", "<=", $this->toDate);
-            });
+            })->when(
+                $this->search,
+                fn($query) => $query->where(function ($q) {
+                    $q->whereHas('loanParty', fn($q2) => $q2->where('name', 'like', '%' . $this->search . '%'))
+                        ->orWhere('amount', 'like', '%' . $this->search . '%')
+                        ->orWhere('note', 'like', '%' . $this->search . '%');
+                }),
+            )
+            ->when($this->fromDate, fn($query) => $query->whereHas('loanParty', fn($q) => $q->whereDate('due_date', '>=', $this->fromDate)))
+            ->when($this->toDate, fn($query) => $query->whereHas('loanParty', fn($q) => $q->whereDate('due_date', '>=', $this->toDate)))
+        ;
     }
 
 
@@ -57,11 +61,12 @@ class IncomeExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSi
             [
                 "#",
                 "Date",
-                "Amount",
+                "Name",
+                "Email",
                 "Type",
+                "Amount",
                 "Account",
-                "Category",
-                "Note"
+                "Due Date"
             ]
         ];
     }
@@ -71,11 +76,12 @@ class IncomeExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSi
         return [
             $row->id,
             $row->date->format("d M Y"),
-            $row->amount,
+            $row->loanParty?->name,
+            $row->loanParty?->email,
             strtoupper($row->type),
+            $row->amount,
             $row->toAccount?->name,
-            $row->category?->name,
-            $row->note
+            $row->loanParty?->due_date->format("d M Y")
         ];
     }
 
@@ -99,19 +105,11 @@ class IncomeExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSi
                 'vertical' => Alignment::VERTICAL_CENTER
             ],
         ]);
-
-
-        $sheet->getStyle('G1:G' . $sheet->getHighestRow())->getAlignment()->setWrapText(true);
-
-
-        $sheet->getStyle('G1:G' . $sheet->getHighestRow())->getAlignment()->setWrapText(true);
     }
 
     public function columnWidths(): array
     {
-        return [
-            'G' => 55
-        ];
+        return [];
     }
 
     public function defaultStyles(Style $defaultStyle)
