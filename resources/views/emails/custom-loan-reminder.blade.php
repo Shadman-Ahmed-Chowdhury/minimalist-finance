@@ -21,7 +21,7 @@
             <table role="presentation" class="container" cellpadding="0" cellspacing="0" width="600" style="max-width: 600px; width: 100%; background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
                 <tr>
                     <td class="header" style="background: linear-gradient(90deg, #3b82f6, #60a5fa); padding: 20px; text-align: center; border-top-left-radius: 12px; border-top-right-radius: 12px;">
-                        <img src="https://via.placeholder.com/150x50?text=Your+Logo" alt="Company Logo" style="max-width: 150px; height: auto; display: block; margin: 0 auto 10px;">
+                        <h1>Minimalist Finance</h1>
                         <h1 style="font-size: 24px; font-weight: 700; color: #ffffff; margin: 0;">Loan Reminder</h1>
                     </td>
                 </tr>
