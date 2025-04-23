@@ -24,7 +24,6 @@ class CustomLoanReminderMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Loan Reminder Notification')
-            ->view('emails.custom-loan-reminder');
+        return $this->subject('Loan Reminder Notification');
     }
 }

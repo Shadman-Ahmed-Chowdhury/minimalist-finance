@@ -59,6 +59,7 @@ new class extends Component {
         try {
             $transaction = Transaction::with(['loanParty', 'toAccount', 'fromAccount'])->findOrFail($this->transactionId);
 
+
             // Queue the email
             Mail::to($this->loanPartyEmail)->queue(new CustomLoanReminderMail(
                 $transaction->loanParty->name,
@@ -66,7 +67,7 @@ new class extends Component {
                 $transaction
             ));
 
-            Toaster::success('Notification email queued successfully.');
+            Toaster::success('Notification email sent successfully.');
             $this->closeModal();
         } catch (\Exception $e) {
             Toaster::error('Failed to queue notification email: ' . $e->getMessage());

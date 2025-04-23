@@ -8,6 +8,7 @@ use Masmerise\Toaster\Toaster;
 new class extends Component {
 
     public AddLoanForm $form;
+    public $showModal = false;
 
 
     #[Computed]
@@ -24,6 +25,7 @@ new class extends Component {
         $this->reset();
         $this->dispatch('loanAdded');
         $this->showModal = false;
+
     }
 
 };
