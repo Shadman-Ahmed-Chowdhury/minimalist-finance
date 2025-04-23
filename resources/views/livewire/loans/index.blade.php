@@ -9,6 +9,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Masmerise\Toaster\Toaster;
 use App\Exports\LoanExport;
+use Livewire\Attributes\Computed;
 
 new class extends Component {
     use WithPagination;
@@ -28,6 +29,7 @@ new class extends Component {
     public function getTransactionsProperty()
     {
         return Transaction::query()
+            ->with(['loanParty', 'fromAccount', 'toAccount'])
             ->where('type', 'loan')
             ->when($this->filterType, fn($query) => $query->where('loan_type', $this->filterType))
             ->when(
@@ -46,7 +48,7 @@ new class extends Component {
             )
             ->when($this->filterFromDate, fn($query) => $query->whereHas('loanParty', fn($q) => $q->whereDate('due_date', '>=', $this->filterFromDate)))
             ->when($this->filterToDate, fn($query) => $query->whereHas('loanParty', fn($q) => $q->whereDate('due_date', '>=', $this->filterToDate)))
-            ->with(['loanParty', 'fromAccount'])
+
             ->latest()
             ->paginate(10);
     }
@@ -86,6 +88,12 @@ new class extends Component {
         }
     }
 
+    #[Computed]
+    public function accounts()
+    {
+        return Account::where('user_id', auth()->user()->id)->get();
+    }
+
     public function export()
     {
         return (new LoanExport($this->filterType, $this->filterAccount, $this->filterSearch, $this->filterFromDate, $this->filterToDate))->download('export.xlsx');
@@ -98,7 +106,7 @@ new class extends Component {
         <!-- Header Section -->
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-semibold tracking-tight">Loans</h1>
-            @livewire('loans.add')
+            @livewire('loans.add', ['accounts' => $this->accounts])
         </div>
 
         <!-- Filters Section -->
@@ -118,7 +126,7 @@ new class extends Component {
                     <select wire:model.live="filterAccount" id="account"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
                         <option value="">All</option>
-                        @foreach (Account::all() as $account)
+                        @foreach ($this->accounts as $account)
                             <option value="{{ $account->id }}">{{ $account->name }}</option>
                         @endforeach
                     </select>
@@ -166,8 +174,7 @@ new class extends Component {
                     </thead>
                     <tbody>
                         @foreach ($this->transactions as $transaction)
-                            <livewire:loans.table-row
-                                :transaction="$transaction"
+                            <livewire:loans.table-row :transaction="$transaction" :accounts="$this->accounts"
                                 key="tr-{{ $transaction->id }}" />
                         @endforeach
                         @if ($this->transactions->isEmpty())

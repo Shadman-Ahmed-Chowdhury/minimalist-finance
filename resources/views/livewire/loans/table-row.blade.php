@@ -2,11 +2,11 @@
 
 use function Livewire\Volt\{state};
 
-state('transaction');
+state(['transaction', 'accounts']);
 
 ?>
 
-<tr key='tr-{{$transaction->id}}' class="border-b border-gray-200 hover:bg-gray-50">
+<tr key='tr-{{ $transaction->id }}' class="border-b border-gray-200 hover:bg-gray-50">
     <td class="px-4 py-3">
         {{ $transaction->date->format('d M Y') }}
     </td>
@@ -24,7 +24,7 @@ state('transaction');
 
 
     <td class="px-4 py-3">
-        @livewire('loans.notify', ['transactionId' => $transaction->id], 'id'.$transaction->id)
+        @livewire('loans.notify', ['transaction' => $transaction], 'id' . $transaction->id)
         <button wire:click="$parent.deleteTransaction({{ $transaction->id }})"
             wire:confirm="Are you sure you want to delete this loan transaction?"
             class="text-red-600 hover:text-red-800"><i class="ri-delete-bin-6-line"></i>
