@@ -4,7 +4,7 @@ use function Livewire\Volt\{state, form, computed};
 use App\Livewire\Forms\IncomeForm;
 use Masmerise\Toaster\Toaster;
 
-state(['buttonIcon' => 'ri-add-line', 'buttonText' => 'Add Income', 'showModal' => false]);
+state(['buttonIcon' => 'ri-add-line', 'buttonText' => 'Add Income', 'showModal' => false, 'accounts', 'categories']);
 
 form(IncomeForm::class);
 
@@ -18,21 +18,6 @@ $save = function () {
         Toaster::error($th->getMessage());
     }
 };
-
-$accounts = computed(function () {
-    return App\Models\Account::where('user_id', auth()->user()->id)
-        ->select('id', 'name')
-        ->orderBy('name', 'asc')
-        ->get();
-});
-
-$categories = computed(function () {
-    return App\Models\Category::where('user_id', auth()->user()->id)
-        ->income()
-        ->select('id', 'name')
-        ->orderBy('name', 'asc')
-        ->get();
-});
 
 ?>
 
@@ -72,7 +57,7 @@ $categories = computed(function () {
 
                             <option value="">Select Category</option>
 
-                            @foreach ($this->categories as $category)
+                            @foreach ($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                             @endforeach
 
@@ -91,7 +76,7 @@ $categories = computed(function () {
 
                         <option value="">Select Account</option>
 
-                        @foreach ($this->accounts as $account)
+                        @foreach ($accounts as $account)
                             <option value="{{ $account->id }}">{{ $account->name }}</option>
                         @endforeach
 
