@@ -17,8 +17,8 @@ class Add extends Component
     public $showModal = false;
     public AddExpenseForm $form;
 
-    public  $accounts;
-    public  $categories;
+    public  $accounts = [];
+    public  $categories = [];
 
 
     public function save()
@@ -38,7 +38,7 @@ class Add extends Component
         Toaster::success('Expense added successfully and balance updated.');
 
         // Reset the form
-        $this->reset();
+        $this->form->reset();
 
         $this->dispatch('expenseAdded'); // Dispatch an event to notify other components
 
