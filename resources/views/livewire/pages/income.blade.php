@@ -5,6 +5,7 @@ use function Livewire\Volt\{computed, uses, on, state, updated};
 use Livewire\WithPagination;
 use Masmerise\Toaster\Toaster;
 use Carbon\Carbon;
+use App\Exports\IncomeExport;
 
 on(['incomeAdded' => '$refresh', 'incomeRemoved' => '$refresh']);
 
@@ -47,7 +48,9 @@ $incomes = computed(function () {
             return $query->where('category_id', $this->filterCategory);
         })
         ->when($this->filterSearch, function ($query) {
-            return $query->where('note', 'like', '%' . $this->filterSearch . '%')->orWhere('amount', 'like', '%' . $this->filterSearch . '%');
+            return $query->where(function ($query) {
+                return $query->where('note', 'like', '%' . $this->filterSearch . '%')->orWhere('amount', 'like', '%' . $this->filterSearch . '%');
+            });
         })
         ->when($this->filterFromDate, function ($query) {
             return $query->whereDate('date', '>=', $this->filterFromDate);
@@ -95,6 +98,10 @@ $deleteIncome = function ($id) {
     $this->dispatch('incomeRemoved');
 };
 
+$export = function () {
+    return (new IncomeExport($this->filterCategory, $this->filterAccount, $this->filterSearch, $this->filterFromDate, $this->filterToDate))->download('income.xlsx');
+};
+
 ?>
 <main class="flex-1 p-8">
     <div class="mx-auto space-y-6">
@@ -135,7 +142,7 @@ $deleteIncome = function ($id) {
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
                 </div>
             </div>
-            <div class="flex space-x-4">
+            <div class="flex space-x-4 my-2">
 
                 <div class="flex-1">
                     <label for="fromDate" class="block mb-2 text-sm font-medium text-gray-900">From Date</label>
@@ -149,6 +156,8 @@ $deleteIncome = function ($id) {
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" />
                 </div>
             </div>
+            <button class="px-5 py-2 rounded bg-primary-500 text-white hover:bg-primary-700"
+                wire:click="export">Export</button>
         </div>
 
         <!-- Expense Table -->

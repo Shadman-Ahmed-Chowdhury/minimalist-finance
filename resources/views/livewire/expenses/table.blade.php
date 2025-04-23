@@ -9,6 +9,7 @@ use Livewire\Attributes\Computed;
 use Livewire\Volt\Component;
 use Livewire\WithPagination;
 use Carbon\Carbon;
+use App\Exports\ExpenseExport;
 
 new class extends Component {
     use WithPagination;
@@ -58,7 +59,9 @@ new class extends Component {
                 $query->where('from_account_id', $this->filterAccount);
             })
             ->when($this->filterSearch, function ($query) {
-                $query->where('note', 'like', '%' . $this->filterSearch . '%')->orWhere('amount', 'like', '%' . $this->filterSearch . '%');
+                return $query->where(function ($query) {
+                    return $query->where('note', 'like', '%' . $this->filterSearch . '%')->orWhere('amount', 'like', '%' . $this->filterSearch . '%');
+                });
             })
             ->when($this->filterFromDate, function ($query) {
                 return $query->whereDate('date', '>=', $this->filterFromDate);
@@ -101,6 +104,11 @@ new class extends Component {
     public function delete($id)
     {
         $this->dispatch('open-delete-modal', expenseId: $id);
+    }
+
+    public function export()
+    {
+        return (new ExpenseExport($this->filterCategory, $this->filterAccount, $this->filterSearch, $this->filterFromDate, $this->filterToDate))->download('export.xlsx');
     }
 };
 ?>
@@ -147,7 +155,7 @@ new class extends Component {
                         placeholder="Search by note or amount">
                 </div>
             </div>
-            <div class="flex space-x-4">
+            <div class="flex space-x-4 my-2">
 
                 <div class="flex-1">
                     <label for="fromDate" class="block mb-2 text-sm font-medium text-gray-900">From Date</label>
@@ -161,6 +169,10 @@ new class extends Component {
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" />
                 </div>
             </div>
+
+            <button class="px-5 py-2 rounded bg-primary-500 text-white hover:bg-primary-700"
+                wire:click="export">Export</button>
+
         </div>
 
 
