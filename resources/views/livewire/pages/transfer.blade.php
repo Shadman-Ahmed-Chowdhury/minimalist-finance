@@ -27,7 +27,8 @@ updated([
 ]);
 
 $transfers = computed(function () {
-    return App\Models\Transaction::transfer()
+    return App\Models\Transaction::with(['fromAccount', 'toAccount'])
+        ->transfer()
         ->where('user_id', auth()->user()->id)
         ->latest()
         ->when($this->filterToAccount, function ($query) {
@@ -42,13 +43,12 @@ $transfers = computed(function () {
         ->when($this->filterToDate, function ($query) {
             return $query->whereDate('date', '<=', $this->filterToDate);
         })
-        ->with(['fromAccount', 'toAccount'])
         ->paginate(10);
 });
 
 $accounts = computed(function () {
     return App\Models\Account::where('user_id', auth()->user()->id)
-        ->select('id', 'name')
+        ->select('id', 'name', 'balance')
         ->orderBy('name', 'asc')
         ->get();
 });
@@ -85,7 +85,7 @@ $deleteIncome = function ($id) {
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-semibold tracking-tight">Transfer</h1>
 
-            <livewire:components.transfer.add-transfer />
+            <livewire:components.transfer.add-transfer :accounts="$this->accounts" />
 
         </div>
 
@@ -145,7 +145,8 @@ $deleteIncome = function ($id) {
                     </thead>
                     <tbody id="incomeTableBody">
                         @foreach ($this->transfers as $transfer)
-                            <livewire:components.transfer.transfer-row key="{{ $transfer->id }}" :transfer="$transfer" />
+                            <livewire:components.transfer.transfer-row key="{{ $transfer->id }}" :transfer="$transfer"
+                                :accounts="$this->accounts" />
                         @endforeach
                         @if ($this->transfers->isEmpty())
                             <tr>

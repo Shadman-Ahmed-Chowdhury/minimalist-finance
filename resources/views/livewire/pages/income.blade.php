@@ -109,7 +109,7 @@ $export = function () {
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-semibold tracking-tight">Income</h1>
 
-            <livewire:components.income.add-income />
+            <livewire:components.income.add-income :accounts="$this->accounts" :categories="$this->categories" />
 
         </div>
 
@@ -176,7 +176,8 @@ $export = function () {
                     </thead>
                     <tbody id="incomeTableBody">
                         @foreach ($this->incomes as $income)
-                            <livewire:components.income.income-row key="{{ $income->id }}" :income="$income" />
+                            <livewire:components.income.income-row key="{{ $income->id }}" :income="$income"
+                                :accounts="$this->accounts" :categories="$this->categories" />
                         @endforeach
                         @if ($this->incomes->isEmpty())
                             <tr>

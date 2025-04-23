@@ -51,7 +51,7 @@ new class extends Component {
     public function expenses()
     {
         return Transaction::with(['category', 'fromAccount'])
-            ->where('type', 'expense') // Filter only expense transactions
+            ->expense() // Filter only expense transactions
             ->when($this->filterCategory, function ($query) {
                 $query->where('category_id', $this->filterCategory);
             })
@@ -77,7 +77,7 @@ new class extends Component {
     public function categories()
     {
         return Category::where('user_id', auth()->id())
-            ->where('type', 'expense')
+            ->expense()
             ->get();
     }
 
@@ -119,7 +119,7 @@ new class extends Component {
         <!-- Header Section -->
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-semibold tracking-tight">Expenses</h1>
-            <livewire:expenses.add />
+            <livewire:expenses.add :accounts="$this->accounts" :categories="$this->categories" />
         </div>
 
         <!-- Filters Section -->
@@ -230,7 +230,7 @@ new class extends Component {
             </div>
         </div>
 
-        <livewire:expenses.edit />
+        <livewire:expenses.edit :accounts="$this->accounts" :categories="$this->categories" />
         <livewire:expenses.delete />
     </div>
 

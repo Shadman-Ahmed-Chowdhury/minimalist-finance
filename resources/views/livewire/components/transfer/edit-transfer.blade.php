@@ -4,7 +4,7 @@ use function Livewire\Volt\{state, form, computed, mount};
 use App\Livewire\Forms\TransferForm;
 use Masmerise\Toaster\Toaster;
 
-state(['transfer', 'showModal' => false]);
+state(['transfer', 'showModal' => false, 'accounts']);
 
 form(TransferForm::class);
 

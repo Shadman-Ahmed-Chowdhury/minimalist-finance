@@ -4,7 +4,7 @@ use function Livewire\Volt\{state, form, computed};
 use App\Livewire\Forms\TransferForm;
 use Masmerise\Toaster\Toaster;
 
-state(['buttonIcon' => 'ri-add-line', 'buttonText' => 'Transfer Amount', 'showModal' => false]);
+state(['buttonIcon' => 'ri-add-line', 'buttonText' => 'Transfer Amount', 'showModal' => false, 'accounts']);
 
 form(TransferForm::class);
 
@@ -21,13 +21,6 @@ $save = function () {
         Toaster::error($th->getMessage());
     }
 };
-
-$accounts = computed(function () {
-    return App\Models\Account::where('user_id', auth()->user()->id)
-        ->select('id', 'name', 'balance')
-        ->orderBy('name', 'asc')
-        ->get();
-});
 
 ?>
 

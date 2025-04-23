@@ -14,23 +14,12 @@ use Masmerise\Toaster\Toaster;
 class Add extends Component
 {
 
-public $showModal=false;
+    public $showModal = false;
     public AddExpenseForm $form;
 
-    #[Computed]
-    public function accounts()
-    {
-        return Account::where('user_id', auth()->user()->id)->get();
-    }
+    public  $accounts;
+    public  $categories;
 
-    #[Computed]
-    public function categories()
-    {
-
-        return Category::where('user_id', auth()->user()->id)
-        ->where('type', 'expense')
-        ->get();
-    }
 
     public function save()
     {
@@ -40,7 +29,7 @@ public $showModal=false;
         $account = Account::find($this->form->accountName);
 
         if ($account) {
-        // Deduct the expense amount from the account balance
+            // Deduct the expense amount from the account balance
             $account->balance -= $this->form->amount;
             $account->save();
         }
@@ -55,9 +44,12 @@ public $showModal=false;
 
     }
 
-    public function mount()
+    public function mount($accounts, $categories)
     {
-        $this->form->date = now()->toDateString(); // Set today's date as default
+        $this->form->date = now()->format('Y-m-d'); // Set today's date as default
+
+        $this->accounts = $accounts;
+        $this->categories = $categories;
     }
 
     public function render()

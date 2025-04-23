@@ -13,7 +13,7 @@ on([
 ?>
 
 
-<tr wire:key="{{ $account->id }}">
+<tr key="{{ $account->id }}">
     <td class="px-4 py-3">
         {{ $account->name }}
     </td>

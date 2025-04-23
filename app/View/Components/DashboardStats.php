@@ -17,6 +17,8 @@ class DashboardStats extends Component
      */
     public function __construct()
     {
+        $loan = Transaction::where("user_id", auth()->user()->id)
+            ->loan()->get();
         $this->stats = [
             "totalIncome" => Account::where("user_id", auth()->user()->id)->sum("balance"),
             "monthlyExpense" => Transaction::where("user_id", auth()->user()->id)
@@ -27,15 +29,11 @@ class DashboardStats extends Component
                 ->income()
                 ->monthly()
                 ->sum("amount"),
-            "totalLoanTaken" => Transaction::where("user_id", auth()->user()->id)
-                ->loan()
+            "totalLoanTaken" => $loan
                 ->where('loan_type', 'taken')
-                ->monthly()
                 ->sum("amount"),
-            "totalLoanGiven" => Transaction::where("user_id", auth()->user()->id)
-                ->loan()
+            "totalLoanGiven" => $loan
                 ->where('loan_type', 'given')
-                ->monthly()
                 ->sum("amount"),
         ];
     }
