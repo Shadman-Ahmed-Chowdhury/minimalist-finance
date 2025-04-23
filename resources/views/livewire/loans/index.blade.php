@@ -20,7 +20,7 @@ new class extends Component {
     public $filterFromDate = '';
     public $filterToDate = '';
 
-    public $listeners = [
+    protected $listeners = [
         'loanAdded' => '$refresh',
         'loanDeleted' => '$refresh',
     ];
@@ -166,29 +166,9 @@ new class extends Component {
                     </thead>
                     <tbody>
                         @foreach ($this->transactions as $transaction)
-                            <tr class="border-b border-gray-200 hover:bg-gray-50">
-                                <td class="px-4 py-3">
-                                    {{ $transaction->date->format('d M Y') }}
-                                </td>
-                                <td class="px-4 py-3">${{ number_format($transaction->amount, 2) }}</td>
-                                <td class="px-4 py-3">{{ $transaction->loanParty?->name ?? 'N/A' }}</td>
-                                <td class="px-4 py-3">{{ ucfirst($transaction->loan_type) }}</td>
-                                <td class="px-4 py-3">
-                                    {{ $transaction->loan_type === 'taken'
-                                        ? $transaction->toAccount?->name ?? 'N/A'
-                                        : $transaction->fromAccount?->name ?? 'N/A' }}
-                                </td>
-                                <td class="px-4 py-3">
-                                    {{ $transaction->loanParty?->due_date->format('d M Y') }}
-                                </td>
-                                <td class="px-4 py-3">
-                                    <button wire:click="deleteTransaction({{ $transaction->id }})"
-                                        wire:confirm="Are you sure you want to delete this loan transaction?"
-                                        class="text-red-600 hover:text-red-800">
-                                        Delete
-                                    </button>
-                                </td>
-                            </tr>
+                            <livewire:loans.table-row
+                                :transaction="$transaction"
+                                key="tr-{{ $transaction->id }}" />
                         @endforeach
                         @if ($this->transactions->isEmpty())
                             <tr>
