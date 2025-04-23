@@ -13,8 +13,8 @@ state([
     'amount' => null,
     'from_account_id' => null,
     'note' => null,
-    'categories' => fn() => Category::where('user_id', auth()->id())->where('type', 'expense')->get(),
-    'accounts' => fn() => Account::where('user_id', auth()->id())->get(),
+    'categories',
+    'accounts',
 ]);
 
 // Listen for the open-edit-modal event
@@ -44,8 +44,7 @@ rules([
 $save = function () {
     $this->validate();
 
-    try{
-
+    try {
         DB::beginTransaction();
 
         $expense = Transaction::findOrFail($this->expenseId);
@@ -69,8 +68,7 @@ $save = function () {
             $account->save();
         }
         DB::commit();
-    }
-    catch (\Exception $e) {
+    } catch (\Exception $e) {
         DB::rollBack();
         session()->flash('error', 'Failed to update expense: ' . $e->getMessage());
     }
@@ -91,7 +89,7 @@ $close = function () {
 
 <div>
     @if ($isOpen)
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+        <div class="fixed inset-0 bg-black/25 bg-opacity-50 flex items-center justify-center z-50">
             <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
                 <h2 class="text-lg font-semibold mb-4">Edit Expense</h2>
                 <form wire:submit.prevent="save">
@@ -99,52 +97,70 @@ $close = function () {
                         <!-- Date -->
                         <div>
                             <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
-                            <input type="date" wire:model="date" id="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" readonly>
-                            @error('date') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            <input type="date" wire:model="date" id="date"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                                readonly>
+                            @error('date')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         <!-- Category -->
                         <div>
                             <label for="category_id" class="block text-sm font-medium text-gray-700">Category</label>
-                            <select wire:model="category_id" id="category_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <select wire:model="category_id" id="category_id"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                                 <option value="">Select a category</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
                             </select>
-                            @error('category_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            @error('category_id')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         <!-- Amount -->
                         <div>
                             <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
-                            <input type="number" wire:model="amount" id="amount" step='0.01' class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            @error('amount') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            <input type="number" wire:model="amount" id="amount" step='0.01'
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                            @error('amount')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         <!-- Account -->
                         <div>
                             <label for="from_account_id" class="block text-sm font-medium text-gray-700">Account</label>
-                            <select wire:model="from_account_id" id="from_account_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <select wire:model="from_account_id" id="from_account_id"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                                 <option value="">Select an account</option>
                                 @foreach ($accounts as $account)
                                     <option value="{{ $account->id }}">{{ $account->name }}</option>
                                 @endforeach
                             </select>
-                            @error('from_account_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            @error('from_account_id')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         <!-- Note -->
                         <div>
                             <label for="note" class="block text-sm font-medium text-gray-700">Note</label>
-                            <textarea wire:model="note" id="note" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
-                            @error('note') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            <textarea wire:model="note" id="note"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"></textarea>
+                            @error('note')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 
                     <div class="mt-6 flex justify-end space-x-2">
-                        <button type="button" wire:click="close" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">Cancel</button>
-                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">Save</button>
+                        <button type="button" wire:click="close"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">Cancel</button>
+                        <button type="submit"
+                            class="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700">Save</button>
                     </div>
                 </form>
             </div>
