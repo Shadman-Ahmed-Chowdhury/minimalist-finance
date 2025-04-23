@@ -2,11 +2,13 @@
 
 use function Livewire\Volt\{state, on, computed, mount};
 
-state(['transfer']);
+state(['transfer', 'accounts']);
 
-on(function () {
-    return ['transferUpdated' . $this->transfer->id => $this->transfer->refresh()];
-});
+on([
+    'transferUpdated{transfer.id}' => function () {
+        $this->transfer->refresh();
+    },
+]);
 
 ?>
 
@@ -28,7 +30,7 @@ on(function () {
     </td>
     <td class="px-4 py-3">
 
-        <livewire:components.transfer.edit-transfer :transfer="$transfer" />
+        <livewire:components.transfer.edit-transfer :transfer="$transfer" :accounts="$accounts" />
 
         <button title="Delete" wire:confirm="Are you sure to delete it?"
             wire:click="$parent.deleteIncome({{ $transfer->id }})" class="px-1 py-1 text-red-500">
