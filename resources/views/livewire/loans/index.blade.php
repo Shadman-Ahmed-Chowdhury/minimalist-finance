@@ -106,7 +106,7 @@ new class extends Component {
 
     public function export()
     {
-        return (new LoanExport($this->filterType, $this->filterAccount, $this->filterSearch, $this->filterFromDate, $this->filterToDate))->download('export.xlsx');
+        return (new LoanExport($this->filterType, $this->filterAccount, $this->filterSearch, $this->filterFromDate, $this->filterToDate))->download('loans.xlsx');
     }
 };
 ?>

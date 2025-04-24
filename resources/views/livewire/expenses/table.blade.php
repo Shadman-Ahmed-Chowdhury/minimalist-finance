@@ -108,7 +108,7 @@ new class extends Component {
 
     public function export()
     {
-        return (new ExpenseExport($this->filterCategory, $this->filterAccount, $this->filterSearch, $this->filterFromDate, $this->filterToDate))->download('export.xlsx');
+        return (new ExpenseExport($this->filterCategory, $this->filterAccount, $this->filterSearch, $this->filterFromDate, $this->filterToDate))->download('expenses.xlsx');
     }
 };
 ?>
