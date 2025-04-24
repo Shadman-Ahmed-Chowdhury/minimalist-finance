@@ -110,7 +110,7 @@ $close = function () {
                             <label for="category_id" class="block text-sm font-medium text-gray-700">Category</label>
                             <select wire:model="category_id" id="category_id"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
-                                <option value="">Select a category</option>
+
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
@@ -123,7 +123,7 @@ $close = function () {
                         <!-- Amount -->
                         <div>
                             <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
-                            <input type="number" wire:model="amount" id="amount" step='0.01'
+                            <input type="text" wire:model="amount" id="amount" step='0.01'
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                             @error('amount')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -135,7 +135,7 @@ $close = function () {
                             <label for="from_account_id" class="block text-sm font-medium text-gray-700">Account</label>
                             <select wire:model="from_account_id" id="from_account_id"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
-                                <option value="">Select an account</option>
+
                                 @foreach ($accounts as $account)
                                     <option value="{{ $account->id }}">{{ $account->name }}</option>
                                 @endforeach
