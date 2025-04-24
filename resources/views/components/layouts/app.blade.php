@@ -123,15 +123,9 @@
                 class="absolute bottom-[85px] left-[230px] bg-white rounded-lg shadow-lg border border-gray-200 w-56 hidden">
                 <ul class="py-2 text-sm">
                     <li>
-                        <a href="#" class="flex items-center px-4 py-2 hover:bg-gray-100">
+                        <a href="{{ route('profile') }}" class="flex items-center px-4 py-2 hover:bg-gray-100">
                             <i class="ri-user-line mr-2"></i>
                             <span>Profile</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="flex items-center px-4 py-2 hover:bg-gray-100">
-                            <i class="ri-settings-3-line mr-2"></i>
-                            <span>Settings</span>
                         </a>
                     </li>
                     <li class="border-t border-gray-100 mt-2 pt-2">
