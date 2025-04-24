@@ -18,7 +18,13 @@ on([
         {{ $income->date->format('d M Y') }}
     </td>
     <td class="px-4 py-3">
-        {{ $income->category?->name }}
+        @if ($income->type == 'initial')
+            Initial
+        @elseif ($income->type == 'loan_payment')
+            Loan Return
+        @else
+            {{ $income->category?->name }}
+        @endif
     </td>
     <td class="px-4 py-3">${{ number_format($income->amount, 2) }}</td>
     <td class="px-4 py-3">

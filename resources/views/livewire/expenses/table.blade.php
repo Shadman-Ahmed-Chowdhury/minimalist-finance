@@ -203,7 +203,15 @@ new class extends Component {
                         @foreach ($this->expenses as $expense)
                             <tr class="border-b border-gray-200">
                                 <td class="px-4 py-3 text-gray-700">{{ $expense->date->format('d M Y') }}</td>
-                                <td class="px-4 py-3 text-gray-700">{{ $expense->category?->name }}</td>
+                                <td class="px-4 py-3 text-gray-700">
+                                    @if ($expense->type == 'initial')
+                                        Initial
+                                    @elseif ($expense->type == 'loan_payment')
+                                        Loan Return
+                                    @else
+                                        {{ $expense->category?->name }}
+                                    @endif
+                                </td>
                                 <td class="px-4 py-3 text-gray-700">{{ number_format($expense->amount, 2) }}</td>
                                 <td class="px-4 py-3 text-gray-700">{{ $expense->fromAccount?->name }}</td>
                                 <td class="px-4 py-3 text-gray-700">{{ $expense->note }}</td>

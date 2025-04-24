@@ -20,7 +20,7 @@ new class extends Component {
     public $filterDueDate = '';
     public $filterFromDate = '';
     public $filterToDate = '';
-    public $filterStatus = 'all';
+    public $filterStatus = 'unpaid';
 
     protected $listeners = [
         'loanAdded' => '$refresh',
