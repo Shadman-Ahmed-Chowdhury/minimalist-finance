@@ -2,7 +2,7 @@
 
 use function Livewire\Volt\{state, on};
 
-state(['income']);
+state(['income', 'accounts', 'categories']);
 
 on([
     'incomeUpdated{income.id}' => function () {
@@ -18,7 +18,13 @@ on([
         {{ $income->date->format('d M Y') }}
     </td>
     <td class="px-4 py-3">
-        {{ $income->category?->name }}
+        @if ($income->type == 'initial')
+            Initial
+        @elseif ($income->type == 'loan_payment')
+            Loan Return
+        @else
+            {{ $income->category?->name }}
+        @endif
     </td>
     <td class="px-4 py-3">${{ number_format($income->amount, 2) }}</td>
     <td class="px-4 py-3">
@@ -29,7 +35,7 @@ on([
     </td>
     <td class="px-4 py-3">
 
-        <livewire:components.income.edit-income :income="$income" />
+        <livewire:components.income.edit-income :income="$income" :accounts="$accounts" :categories="$categories" />
 
         <button title="Delete" wire:confirm="Are you sure to delete it?"
             wire:click="$parent.deleteIncome({{ $income->id }})" class="px-1 py-1 text-red-500">

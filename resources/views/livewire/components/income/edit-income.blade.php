@@ -4,7 +4,7 @@ use function Livewire\Volt\{state, form, computed, mount};
 use App\Livewire\Forms\IncomeForm;
 use Masmerise\Toaster\Toaster;
 
-state(['income', 'showModal' => false]);
+state(['income', 'showModal' => false, 'accounts', 'categories']);
 
 form(IncomeForm::class);
 
@@ -22,21 +22,6 @@ $save = function () {
         Toaster::error($th->getMessage());
     }
 };
-
-$accounts = computed(function () {
-    return App\Models\Account::where('user_id', auth()->user()->id)
-        ->select('id', 'name')
-        ->orderBy('name', 'asc')
-        ->get();
-});
-
-$categories = computed(function () {
-    return App\Models\Category::where('user_id', auth()->user()->id)
-        ->income()
-        ->select('id', 'name')
-        ->orderBy('name', 'asc')
-        ->get();
-});
 
 ?>
 
@@ -73,7 +58,7 @@ $categories = computed(function () {
                         <select wire:model="form.category_id" id="name"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 ">
 
-                            @foreach ($this->categories as $category)
+                            @foreach ($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                             @endforeach
 
@@ -91,7 +76,7 @@ $categories = computed(function () {
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 ">
 
 
-                        @foreach ($this->accounts as $account)
+                        @foreach ($accounts as $account)
                             <option value="{{ $account->id }}">{{ $account->name }}</option>
                         @endforeach
 

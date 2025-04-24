@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->enum('type', ['income', 'expense', 'loan', 'transfer', 'initial']);
+            $table->enum('type', ['income', 'expense', 'loan', 'transfer', 'initial', 'loan_payment']);
             $table->enum('loan_type', ['taken', 'given'])->nullable();
             $table->foreignId('loan_party_id')->nullable()->constrained('loan_parties')->onDelete('cascade');
             $table->foreignId('category_id')->nullable()->constrained()->onDelete('cascade');

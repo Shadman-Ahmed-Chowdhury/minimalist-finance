@@ -8,14 +8,17 @@ use App\Models\Transaction;
 use Livewire\Attributes\Computed;
 use Livewire\Volt\Component;
 use Livewire\WithPagination;
+use Carbon\Carbon;
+use App\Exports\ExpenseExport;
 
-new class extends Component
-{
+new class extends Component {
     use WithPagination;
 
     public $filterCategory = '';
     public $filterAccount = '';
     public $filterSearch = '';
+    public $filterFromDate;
+    public $filterToDate;
 
     public $listeners = [
         'expenseAdded' => '$refresh',
@@ -48,7 +51,7 @@ new class extends Component
     public function expenses()
     {
         return Transaction::with(['category', 'fromAccount'])
-            ->where('type', 'expense') // Filter only expense transactions
+            ->expense() // Filter only expense transactions
             ->when($this->filterCategory, function ($query) {
                 $query->where('category_id', $this->filterCategory);
             })
@@ -56,8 +59,15 @@ new class extends Component
                 $query->where('from_account_id', $this->filterAccount);
             })
             ->when($this->filterSearch, function ($query) {
-                $query->where('note', 'like', '%' . $this->filterSearch . '%')
-                    ->orWhere('amount', 'like', '%' . $this->filterSearch . '%');
+                return $query->where(function ($query) {
+                    return $query->where('note', 'like', '%' . $this->filterSearch . '%')->orWhere('amount', 'like', '%' . $this->filterSearch . '%');
+                });
+            })
+            ->when($this->filterFromDate, function ($query) {
+                return $query->whereDate('date', '>=', $this->filterFromDate);
+            })
+            ->when($this->filterToDate, function ($query) {
+                return $query->whereDate('date', '<=', $this->filterToDate);
             })
             ->latest()
             ->paginate(10);
@@ -66,7 +76,9 @@ new class extends Component
     #[Computed]
     public function categories()
     {
-        return Category::where('user_id', auth()->id())->where('type', 'expense')->get();
+        return Category::where('user_id', auth()->id())
+            ->expense()
+            ->get();
     }
 
     #[Computed]
@@ -80,6 +92,8 @@ new class extends Component
         $this->filterCategory = '';
         $this->filterAccount = '';
         $this->filterSearch = '';
+        $this->filterFromDate = Carbon::now()->subDays(30)->format('Y-m-d');
+        $this->filterToDate = Carbon::now()->format('Y-m-d');
     }
 
     public function edit($id)
@@ -87,13 +101,16 @@ new class extends Component
         $this->dispatch('open-edit-modal', expenseId: $id);
     }
 
-
     public function delete($id)
     {
         $this->dispatch('open-delete-modal', expenseId: $id);
     }
 
-}
+    public function export()
+    {
+        return (new ExpenseExport($this->filterCategory, $this->filterAccount, $this->filterSearch, $this->filterFromDate, $this->filterToDate))->download('export.xlsx');
+    }
+};
 ?>
 
 
@@ -102,7 +119,7 @@ new class extends Component
         <!-- Header Section -->
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-semibold tracking-tight">Expenses</h1>
-            <livewire:expenses.add />
+            <livewire:expenses.add :accounts="$this->accounts" :categories="$this->categories" />
         </div>
 
         <!-- Filters Section -->
@@ -116,7 +133,7 @@ new class extends Component
 
                         @foreach ($this->categories as $category)
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
-                       @endforeach
+                        @endforeach
 
 
                     </select>
@@ -138,6 +155,24 @@ new class extends Component
                         placeholder="Search by note or amount">
                 </div>
             </div>
+            <div class="flex space-x-4 my-2">
+
+                <div class="flex-1">
+                    <label for="fromDate" class="block mb-2 text-sm font-medium text-gray-900">From Date</label>
+                    <input type="date" wire:model.live="filterFromDate"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" />
+                </div>
+
+                <div class="flex-1">
+                    <label for="toDate" class="block mb-2 text-sm font-medium text-gray-900">To Date</label>
+                    <input type="date" wire:model.live="filterToDate"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" />
+                </div>
+            </div>
+
+            <button class="px-5 py-2 rounded bg-primary-500 text-white hover:bg-primary-700"
+                wire:click="export">Export</button>
+
         </div>
 
 
@@ -167,17 +202,27 @@ new class extends Component
 
                         @foreach ($this->expenses as $expense)
                             <tr class="border-b border-gray-200">
-                                <td class="px-4 py-3 text-gray-700">{{ $expense->date->format('Y-m-d') }}</td>
-                                <td class="px-4 py-3 text-gray-700">{{ $expense->category?->name }}</td>
+                                <td class="px-4 py-3 text-gray-700">{{ $expense->date->format('d M Y') }}</td>
+                                <td class="px-4 py-3 text-gray-700">
+                                    @if ($expense->type == 'initial')
+                                        Initial
+                                    @elseif ($expense->type == 'loan_payment')
+                                        Loan Return
+                                    @else
+                                        {{ $expense->category?->name }}
+                                    @endif
+                                </td>
                                 <td class="px-4 py-3 text-gray-700">{{ number_format($expense->amount, 2) }}</td>
                                 <td class="px-4 py-3 text-gray-700">{{ $expense->fromAccount?->name }}</td>
                                 <td class="px-4 py-3 text-gray-700">{{ $expense->note }}</td>
                                 <td class="px-4 py-3 text-gray-700">
-                                    <button wire:click="edit({{ $expense->id }})" class="text-blue-500 hover:text-blue-700">
+                                    <button wire:click="edit({{ $expense->id }})"
+                                        class="text-primary-500 hover:text-primary-700">
                                         Edit
                                     </button>
 
-                                    <button wire:click="delete({{ $expense->id }})" class="text-red-500 hover:text-red-700 ml-2">
+                                    <button wire:click="delete({{ $expense->id }})"
+                                        class="text-red-500 hover:text-red-700 ml-2">
                                         Delete
                                     </button>
                                 </td>
@@ -193,7 +238,7 @@ new class extends Component
             </div>
         </div>
 
-        <livewire:expenses.edit />
+        <livewire:expenses.edit :accounts="$this->accounts" :categories="$this->categories" />
         <livewire:expenses.delete />
     </div>
 

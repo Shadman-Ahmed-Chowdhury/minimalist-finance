@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->enum('type', ['borrower', 'lender']);
             $table->string('email');
+            $table->float('remaining_amount')->nullable();
             $table->date('due_date');
             $table->timestamps();
         });

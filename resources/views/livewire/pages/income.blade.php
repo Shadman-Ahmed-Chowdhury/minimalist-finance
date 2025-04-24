@@ -4,6 +4,8 @@ use function Livewire\Volt\{computed, uses, on, state, updated};
 
 use Livewire\WithPagination;
 use Masmerise\Toaster\Toaster;
+use Carbon\Carbon;
+use App\Exports\IncomeExport;
 
 on(['incomeAdded' => '$refresh', 'incomeRemoved' => '$refresh']);
 
@@ -13,6 +15,8 @@ state([
     'filterAccount' => '',
     'filterCategory' => '',
     'filterSearch' => '',
+    'filterFromDate' => Carbon::now()->subDays(30)->format('Y-m-d'),
+    'filterToDate' => Carbon::now()->format('Y-m-d'),
 ]);
 
 updated([
@@ -23,6 +27,12 @@ updated([
         $this->resetPage();
     },
     'filterSearch' => function () {
+        $this->resetPage();
+    },
+    'filterFromDate' => function () {
+        $this->resetPage();
+    },
+    'filterToDate' => function () {
         $this->resetPage();
     },
 ]);
@@ -38,7 +48,15 @@ $incomes = computed(function () {
             return $query->where('category_id', $this->filterCategory);
         })
         ->when($this->filterSearch, function ($query) {
-            return $query->where('note', 'like', '%' . $this->filterSearch . '%')->orWhere('amount', 'like', '%' . $this->filterSearch . '%');
+            return $query->where(function ($query) {
+                return $query->where('note', 'like', '%' . $this->filterSearch . '%')->orWhere('amount', 'like', '%' . $this->filterSearch . '%');
+            });
+        })
+        ->when($this->filterFromDate, function ($query) {
+            return $query->whereDate('date', '>=', $this->filterFromDate);
+        })
+        ->when($this->filterToDate, function ($query) {
+            return $query->whereDate('date', '<=', $this->filterToDate);
         })
         ->with(['category', 'toAccount'])
         ->paginate(10);
@@ -80,6 +98,10 @@ $deleteIncome = function ($id) {
     $this->dispatch('incomeRemoved');
 };
 
+$export = function () {
+    return (new IncomeExport($this->filterCategory, $this->filterAccount, $this->filterSearch, $this->filterFromDate, $this->filterToDate))->download('income.xlsx');
+};
+
 ?>
 <main class="flex-1 p-8">
     <div class="mx-auto space-y-6">
@@ -87,7 +109,7 @@ $deleteIncome = function ($id) {
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-semibold tracking-tight">Income</h1>
 
-            <livewire:components.income.add-income />
+            <livewire:components.income.add-income :accounts="$this->accounts" :categories="$this->categories" />
 
         </div>
 
@@ -120,6 +142,22 @@ $deleteIncome = function ($id) {
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
                 </div>
             </div>
+            <div class="flex space-x-4 my-2">
+
+                <div class="flex-1">
+                    <label for="fromDate" class="block mb-2 text-sm font-medium text-gray-900">From Date</label>
+                    <input type="date" wire:model.live="filterFromDate"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" />
+                </div>
+
+                <div class="flex-1">
+                    <label for="toDate" class="block mb-2 text-sm font-medium text-gray-900">To Date</label>
+                    <input type="date" wire:model.live="filterToDate"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" />
+                </div>
+            </div>
+            <button class="px-5 py-2 rounded bg-primary-500 text-white hover:bg-primary-700"
+                wire:click="export">Export</button>
         </div>
 
         <!-- Expense Table -->
@@ -138,9 +176,26 @@ $deleteIncome = function ($id) {
                     </thead>
                     <tbody id="incomeTableBody">
                         @foreach ($this->incomes as $income)
-                            <livewire:components.income.income-row key="{{ $income->id }}" :income="$income" />
+                            <livewire:components.income.income-row key="{{ $income->id }}" :income="$income"
+                                :accounts="$this->accounts" :categories="$this->categories" />
                         @endforeach
+                        @if ($this->incomes->isEmpty())
+                            <tr>
+                                <td colspan="6" class="px-4 py-3 text-center text-gray-500">
+                                    No loan transactions found
+                                </td>
+                            </tr>
+                        @endif
                     </tbody>
+                    <tfoot class="bg-gray-50 border-t border-gray-200">
+                        <tr>
+                            <th class="text-left px-4 py-3 text-gray-500 font-medium"></th>
+                            <th class="text-left px-4 py-3 text-gray-500 font-medium">Total</th>
+                            <th class="text-left px-4 py-3 text-gray-500 font-medium">
+                                ${{ number_format($this->incomes->sum('amount'), 2) }}</th>
+                            <th class="text-left px-4 py-3 text-gray-500 font-medium" colspan="3"></th>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
             <div class="p-4">

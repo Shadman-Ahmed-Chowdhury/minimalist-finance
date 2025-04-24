@@ -32,12 +32,20 @@ class Transaction extends Model
 
     public function scopeIncome(Builder $query)
     {
-        return $query->whereIn('type', ['income', 'initial']);
+        return $query->where(function ($query) {
+            return $query->whereIn('type', ['income', 'initial'])->orWhere(function ($query) {
+                return $query->where('type', 'loan_payment')->where('loan_type', 'given');
+            });
+        });
     }
 
     public function scopeExpense(Builder $query)
     {
-        return $query->whereIn('type', ['expense']);
+        return $query->where(function ($query) {
+            return $query->whereIn('type', ['expense'])->orWhere(function ($query) {
+                return $query->where('type', 'loan_payment')->where('loan_type', 'taken');
+            });
+        });
     }
 
     public function scopeTransfer(Builder $query)

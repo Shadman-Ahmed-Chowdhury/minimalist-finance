@@ -38,6 +38,7 @@ class AddLoanForm extends Form
             'email' => $this->email,
             'type' => $this->type,
             'due_date' => $this->dueDate,
+            'remaining_amount' => $this->amount,
         ]);
     }
 
