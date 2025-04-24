@@ -24,6 +24,7 @@ state(['transaction', 'accounts']);
 
 
     <td class="px-4 py-3">
+        @livewire('loans.pay', ['transactionId' => $transaction->id], 'pay'.$transaction->id)
         @livewire('loans.notify', ['transaction' => $transaction], 'id' . $transaction->id)
         <button wire:click="$parent.deleteTransaction({{ $transaction->id }})"
             wire:confirm="Are you sure you want to delete this loan transaction?"
