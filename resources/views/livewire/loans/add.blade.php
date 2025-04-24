@@ -8,7 +8,7 @@ use Masmerise\Toaster\Toaster;
 new class extends Component {
     public AddLoanForm $form;
     public $showModal = false;
-    public $accounts = [];
+    public $accounts;
 
     public function mount($accounts)
     {
@@ -20,7 +20,7 @@ new class extends Component {
         $this->form->save();
 
         Toaster::success('Loan added successfully');
-        $this->reset();
+        $this->form->reset();
         $this->dispatch('loanAdded');
         $this->showModal = false;
     }
@@ -61,9 +61,7 @@ new class extends Component {
                     <input wire:model="form.amount" type="number" id="init_balance"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                         placeholder="0" />
-                    @error('form.amount')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+
                 </div>
 
                 <div class="mb-5">
@@ -72,9 +70,7 @@ new class extends Component {
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                         <option value="" disabled selected>Select an account</option>
 
-                        @if ($accounts->isEmpty())
-                            <option value="" disabled>No accounts available</option>
-                        @endif
+
 
                         @foreach ($accounts as $account)
                             <option value="{{ $account->id }}">{{ $account->name }}</option>

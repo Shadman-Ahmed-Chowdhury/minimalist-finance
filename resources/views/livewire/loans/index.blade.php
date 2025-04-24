@@ -20,10 +20,12 @@ new class extends Component {
     public $filterDueDate = '';
     public $filterFromDate = '';
     public $filterToDate = '';
+    public $filterStatus = 'all';
 
     protected $listeners = [
         'loanAdded' => '$refresh',
         'loanDeleted' => '$refresh',
+        'loan-paid' => '$refresh',
     ];
 
     public function getTransactionsProperty()
@@ -48,6 +50,8 @@ new class extends Component {
             )
             ->when($this->filterFromDate, fn($query) => $query->whereHas('loanParty', fn($q) => $q->whereDate('due_date', '>=', $this->filterFromDate)))
             ->when($this->filterToDate, fn($query) => $query->whereHas('loanParty', fn($q) => $q->whereDate('due_date', '>=', $this->filterToDate)))
+            ->when($this->filterStatus === 'paid', fn($query) => $query->whereHas('loanParty', fn($q) => $q->where('remaining_amount', 0)))
+            ->when($this->filterStatus === 'unpaid', fn($query) => $query->whereHas('loanParty', fn($q) => $q->where('remaining_amount', '>', 0)))
 
             ->latest()
             ->paginate(10);
@@ -94,6 +98,12 @@ new class extends Component {
         return Account::where('user_id', auth()->user()->id)->get();
     }
 
+    #[Computed]
+    public function loan_parties()
+    {
+        return LoanParty::where('user_id', auth()->user()->id)->get();
+    }
+
     public function export()
     {
         return (new LoanExport($this->filterType, $this->filterAccount, $this->filterSearch, $this->filterFromDate, $this->filterToDate))->download('export.xlsx');
@@ -132,6 +142,15 @@ new class extends Component {
                     </select>
                 </div>
                 <div class="flex-1">
+                    <label for="status" class="block mb-2 text-sm font-medium text-gray-900">Status</label>
+                    <select wire:model.live="filterStatus" id="status"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
+                        <option value="all">All</option>
+                        <option value="paid">Paid</option>
+                        <option value="unpaid">Unpaid</option>
+                    </select>
+                </div>
+                <div class="flex-1">
                     <label for="search" class="block mb-2 text-sm font-medium text-gray-900">Search</label>
                     <input type="text" wire:model.live.debounce.500ms="filterSearch"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
@@ -165,6 +184,7 @@ new class extends Component {
                         <tr>
                             <th class="text-left px-4 py-3 text-gray-500 font-medium">Date</th>
                             <th class="text-left px-4 py-3 text-gray-500 font-medium">Amount</th>
+                            <th class="text-left px-4 py-3 text-gray-500 font-medium">Remaining Amount</th>
                             <th class="text-left px-4 py-3 text-gray-500 font-medium">Party</th>
                             <th class="text-left px-4 py-3 text-gray-500 font-medium">Type</th>
                             <th class="text-left px-4 py-3 text-gray-500 font-medium">Account</th>
