@@ -9,7 +9,7 @@ class LoanParty extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'name', 'type', 'email', 'due_date'];
+    protected $fillable = ['user_id', 'name', 'type', 'email', 'due_date', 'remaining_amount'];
 
     protected $casts = [
         'due_date' => 'date',

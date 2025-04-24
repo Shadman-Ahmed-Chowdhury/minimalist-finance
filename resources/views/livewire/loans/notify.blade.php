@@ -78,7 +78,7 @@ new class extends Component {
 
     <!-- Modal -->
     <div x-cloak x-show="$wire.showModal"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-10">
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/25 bg-opacity-10">
         <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
             <h2 class="text-lg font-semibold mb-4">Send Notification</h2>
 
