@@ -26,7 +26,7 @@ new class extends Component {
 
     private function determineAccountField(string $loanType): string
     {
-        return $loanType === 'given' ? 'from_account_id' : 'to_account_id';
+        return $loanType !== 'given' ? 'from_account_id' : 'to_account_id';
     }
 
     public function rules()
@@ -43,10 +43,7 @@ new class extends Component {
                     }
                 },
             ],
-            'accountName' => [
-                'required',
-                'exists:accounts,id',
-            ],
+            'accountName' => ['required', 'exists:accounts,id'],
         ];
     }
 
@@ -71,7 +68,7 @@ new class extends Component {
             $loanParty->update(['remaining_amount' => $newBalance]);
 
             // Update account balance
-            $account->balance += ($loanType === 'given' ? $this->amount : -$this->amount);
+            $account->balance += $loanType === 'given' ? $this->amount : -$this->amount;
             $account->save();
 
             // Create loan payment transaction
@@ -87,7 +84,7 @@ new class extends Component {
         });
 
         // Dispatch event to refresh table
-        $this->dispatch('loan-paid'.$transaction->id);
+        $this->dispatch('loan-paid' . $transaction->id);
 
         // Reset form and close modal
         $this->reset(['amount', 'accountName', 'showModal']);
@@ -99,8 +96,7 @@ new class extends Component {
 
 <x-dialog wire:model="showModal">
     <x-dialog.open>
-        <button type="button"
-                class="text-green-600 hover:text-green-800 mr-2">
+        <button type="button" class="text-green-600 hover:text-green-800 mr-2">
             <i class="ri-add-line text-lg"></i>
             Pay
         </button>
@@ -120,8 +116,8 @@ new class extends Component {
                         Payment Amount
                     </label>
                     <input wire:model.debounce.500ms="amount" type="number" id="amount" step="0.01"
-                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                           placeholder="0.00"/>
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        placeholder="0.00" />
                     @error('amount')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -132,13 +128,14 @@ new class extends Component {
                         Account
                     </label>
                     <select wire:model="accountName" id="accountName"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                        <option >Select an account</option>
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        <option>Select an account</option>
                         @if ($accounts->isEmpty())
                             <option value="" disabled>No accounts available</option>
                         @endif
                         @foreach ($accounts as $account)
-                            <option value="{{ $account->id }}">{{ $account->name }} (Balance: ${{ number_format($account->balance, 2) }})</option>
+                            <option value="{{ $account->id }}">{{ $account->name }} (Balance:
+                                ${{ number_format($account->balance, 2) }})</option>
                         @endforeach
                     </select>
                     @error('accountName')
@@ -147,7 +144,7 @@ new class extends Component {
                 </div>
 
                 <button type="submit"
-                        class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">
+                    class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">
                     Submit Payment
                 </button>
             </form>

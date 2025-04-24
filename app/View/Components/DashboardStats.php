@@ -3,6 +3,7 @@
 namespace App\View\Components;
 
 use App\Models\Account;
+use App\Models\LoanParty;
 use App\Models\Transaction;
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -17,8 +18,7 @@ class DashboardStats extends Component
      */
     public function __construct()
     {
-        $loan = Transaction::where("user_id", auth()->user()->id)
-            ->loan()->get();
+        $loan = LoanParty::where("user_id", auth()->user()->id)->where('remaining_amount', '>', 0)->get();
         $this->stats = [
             "totalIncome" => Account::where("user_id", auth()->user()->id)->sum("balance"),
             "monthlyExpense" => Transaction::where("user_id", auth()->user()->id)
@@ -30,11 +30,11 @@ class DashboardStats extends Component
                 ->monthly()
                 ->sum("amount"),
             "totalLoanTaken" => $loan
-                ->where('loan_type', 'taken')
-                ->sum("amount"),
+                ->where('type', 'lender')
+                ->sum("remaining_amount"),
             "totalLoanGiven" => $loan
-                ->where('loan_type', 'given')
-                ->sum("amount"),
+                ->where('type', 'borrower')
+                ->sum("remaining_amount"),
         ];
     }
 
