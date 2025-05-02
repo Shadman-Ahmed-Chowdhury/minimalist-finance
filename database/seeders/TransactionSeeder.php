@@ -12,4 +12,3 @@ class TransactionSeeder extends Seeder
         Transaction::factory(50)->create(); // Adjust the number of transactions as needed
     }
 }
-
